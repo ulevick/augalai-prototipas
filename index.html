@@ -5,119 +5,158 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Augalai prototipas</title>
 <meta name="description" content="ND3 GUI prototipas: F1 augalo atpažinimas ir F2 ligų patikra">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Mono:wght@400;500&display=swap">
 <style>
 :root{
-  --bg:#e9ece8; --app:#fbfcfa; --card:#ffffff; --ink:#18201a; --mute:#5c665e; --line:#cfd6d0;
-  --pri:#1f6b43; --pri2:#e3f1e8; --onpri:#ffffff;
-  --warn:#8a5a00; --warnbg:#fff4d6; --err:#a32020; --errbg:#fde7e7; --info:#1d4f7a; --infobg:#e5f0fa;
-  --demo:#6b4fa0; --demobg:#f1ecfa;
-  --fs:15px;
+  --bg:#e9efe8; --panel:#f7faf5; --paper:#ffffff; --ink:#15241b; --mute:#5d6e63; --line:#d3ddd3;
+  --fill:#eef4ec; --fill2:#dce8da; --strong:#1f5135; --onstrong:#ffffff; --leaf:#3f8f5a;
+  --amber:#8f5308; --amberbg:#fdf1dc; --amberline:#f0c77c;
+  --red:#a32626; --redbg:#fdecea; --redline:#f1b4ae;
+  --blue:#1d4f7a; --bluebg:#e8f1f9; --blueline:#b7d0e6;
+  --demo:#6b4fa0; --demobg:#f4f0fb;
+  --sans:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --disp:"Bricolage Grotesque","Figtree",system-ui,sans-serif;
+  --mono:"DM Mono",ui-monospace,Menlo,Consolas,monospace;
+  --fs:16px; --shadow:0 1px 0 var(--line),0 8px 24px -14px rgba(21,36,27,.35);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#111512; --app:#181d19; --card:#212822; --ink:#e8ede9; --mute:#9fa9a1; --line:#38423a;
-  --pri:#6fcf97; --pri2:#20372a; --onpri:#0d1f14;
-  --warn:#f2c26b; --warnbg:#3a2f14; --err:#ff9b9b; --errbg:#3d1b1b; --info:#9cc8f0; --infobg:#17293a;
-  --demo:#c3a9f2; --demobg:#2a2240; color-scheme:dark}}
+  --bg:#0f1712; --panel:#152019; --paper:#1a271f; --ink:#e6efe7; --mute:#97a99c; --line:#2c3d32;
+  --fill:#213027; --fill2:#2b3d31; --strong:#8fd19e; --onstrong:#0f1712; --leaf:#6cbf82;
+  --amber:#f2b552; --amberbg:#2c2213; --amberline:#6b4d1b; --red:#ff9f97; --redbg:#331816; --redline:#6e2c27;
+  --blue:#9cc8f0; --bluebg:#15263a; --blueline:#2d4a66; --demo:#c3a9f2; --demobg:#241d36; --shadow:none; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#111512; --app:#181d19; --card:#212822; --ink:#e8ede9; --mute:#9fa9a1; --line:#38423a;
-  --pri:#6fcf97; --pri2:#20372a; --onpri:#0d1f14;
-  --warn:#f2c26b; --warnbg:#3a2f14; --err:#ff9b9b; --errbg:#3d1b1b; --info:#9cc8f0; --infobg:#17293a;
-  --demo:#c3a9f2; --demobg:#2a2240; color-scheme:dark}
-:root.big{--fs:18px}
+  --bg:#0f1712; --panel:#152019; --paper:#1a271f; --ink:#e6efe7; --mute:#97a99c; --line:#2c3d32;
+  --fill:#213027; --fill2:#2b3d31; --strong:#8fd19e; --onstrong:#0f1712; --leaf:#6cbf82;
+  --amber:#f2b552; --amberbg:#2c2213; --amberline:#6b4d1b; --red:#ff9f97; --redbg:#331816; --redline:#6e2c27;
+  --blue:#9cc8f0; --bluebg:#15263a; --blueline:#2d4a66; --demo:#c3a9f2; --demobg:#241d36; --shadow:none; color-scheme:dark}
+:root.big{--fs:19px}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:var(--fs);line-height:1.45}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:var(--fs);line-height:1.45;-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:3px solid var(--pri);outline-offset:2px}
-.app{max-width:440px;margin:0 auto;min-height:100vh;background:var(--app);display:flex;flex-direction:column;position:relative;box-shadow:0 0 0 1px var(--line)}
-header.bar{position:sticky;top:0;z-index:5;background:var(--app);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:6px;padding:8px 10px}
-header.bar h1{font-size:1.02em;margin:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ib{border:1px solid var(--line);background:var(--card);border-radius:10px;min-width:44px;height:44px;padding:0 10px;font-weight:600}
-main{flex:1;padding:14px 16px 110px;display:grid;gap:12px;align-content:start}
-nav.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;background:var(--app);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:6}
-nav.tabs button{border:0;background:none;padding:8px 2px 10px;font-size:.78em;display:grid;justify-items:center;gap:2px;color:var(--mute);min-height:56px}
-nav.tabs button.on{color:var(--pri);font-weight:700}
-nav.tabs .ico{font-size:1.35em;line-height:1}
-h2{font-size:1.25em;margin:2px 0 0}
-h3{font-size:1.05em;margin:0}
+:focus-visible{outline:3px solid var(--leaf);outline-offset:2px}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--panel);display:flex;flex-direction:column;position:relative}
+@media (min-width:500px){body{padding:18px 0}.app{border-radius:28px;min-height:calc(100vh - 36px);box-shadow:0 0 0 1px var(--line),0 20px 60px -30px rgba(0,0,0,.4);overflow:hidden}}
+header.bar{position:sticky;top:0;z-index:5;background:var(--panel);display:flex;align-items:center;gap:10px;padding:14px 16px 8px}
+header.bar h1{font-family:var(--disp);font-size:1.3em;line-height:1.15;margin:0;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pill{border:0;background:var(--fill);color:var(--strong);border-radius:999px;min-height:44px;padding:0 14px;font-weight:600;display:inline-flex;align-items:center;gap:4px;flex:none}
+.ibtn{border:0;background:var(--fill);color:var(--strong);border-radius:999px;width:44px;height:44px;display:inline-grid;place-items:center;flex:none;font-weight:700}
+main{flex:1;padding:6px 16px 120px;display:grid;gap:14px;align-content:start}
+main.has-act{padding-bottom:210px}
+nav.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--paper);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);z-index:6;padding-bottom:env(safe-area-inset-bottom,0)}
+@media (min-width:500px){nav.tabs{bottom:18px;border-radius:0 0 28px 28px}}
+nav.tabs button{border:0;background:none;padding:9px 2px 10px;font-size:.74em;display:grid;justify-items:center;gap:3px;color:var(--mute);min-height:60px;font-weight:500}
+nav.tabs button.on{color:var(--strong);font-weight:700}
+.act{position:fixed;left:50%;transform:translateX(-50%);bottom:60px;width:100%;max-width:430px;padding:14px 16px 12px;background:linear-gradient(to bottom,transparent,var(--panel) 22%);display:grid;gap:8px;z-index:5}
+@media (min-width:500px){.act{bottom:78px}}
+svg.ic{flex:none}
+h2{font-family:var(--disp);font-size:1.45em;line-height:1.15;margin:4px 0 0;text-wrap:balance}
+h3{font-family:var(--disp);font-size:1.08em;line-height:1.2;margin:0}
 p{margin:0}
-.mute{color:var(--mute)}
-.small{font-size:.86em}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:8px}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:600;padding:10px 14px;text-align:center}
-.btn.pri{background:var(--pri);color:var(--onpri);border-color:var(--pri)}
-.btn.ghost{background:transparent}
-.btn.danger{color:var(--err);border-color:var(--err)}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-.row{display:flex;gap:8px;align-items:center}
+.mute{color:var(--mute)} .small{font-size:.88em} .xs{font-size:.78em}
+.lbl{font-family:var(--mono);font-size:.72em;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.card{background:var(--paper);border-radius:18px;box-shadow:var(--shadow);outline:1px solid var(--line);padding:16px;display:grid;gap:10px}
+.card.soft{background:var(--fill);outline:0;box-shadow:none}
+.card.hero{background:linear-gradient(160deg,var(--fill2),var(--fill));outline:0;box-shadow:none;border-radius:22px;padding:18px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;border-radius:14px;border:1.5px solid var(--line);background:var(--paper);font-weight:600;padding:10px 14px;text-align:center;line-height:1.2}
+.btn.pri{background:var(--strong);color:var(--onstrong);border-color:var(--strong)}
+.btn.big{min-height:58px;font-size:1.05em}
+.btn.soft{border:0;background:var(--fill);color:var(--strong)}
+.btn.danger{color:var(--red);border-color:var(--redline)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.link{background:none;border:0;color:var(--strong);font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:8px 0;min-height:44px;text-align:center}
+.row{display:flex;gap:10px;align-items:center}
 .row>.btn{flex:1}
-.stack{display:grid;gap:8px}
-.note{border-radius:12px;padding:10px 12px;display:grid;gap:4px;border:1px solid}
-.note.warn{background:var(--warnbg);border-color:var(--warn);}
-.note.warn b:first-child{color:var(--warn)}
-.note.err{background:var(--errbg);border-color:var(--err)}
-.note.err b:first-child{color:var(--err)}
-.note.info{background:var(--infobg);border-color:var(--info)}
-.note.ok{background:var(--pri2);border-color:var(--pri)}
-.demo{border:2px dashed var(--demo);background:var(--demobg);border-radius:12px;padding:10px;display:grid;gap:8px}
-.demo .tag,.tagdemo{font-size:.72em;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--demo)}
-.chip{display:inline-block;border-radius:999px;padding:2px 8px;font-size:.78em;font-weight:700;border:1px solid var(--line)}
-.chip.ai{background:var(--infobg);color:var(--info);border-color:var(--info)}
-.chip.hi{background:var(--pri2);color:var(--pri);border-color:var(--pri)}
-.chip.mid{background:var(--warnbg);color:var(--warn);border-color:var(--warn)}
-.chip.lo{background:var(--errbg);color:var(--err);border-color:var(--err)}
-.chip.nodi{background:var(--card)}
-.ph{position:relative;border-radius:10px;overflow:hidden;border:1px solid var(--line);aspect-ratio:1;background:#dde}
+.stack{display:grid;gap:10px}
+.note{border-radius:16px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;border:1px solid;align-items:start}
+.note>svg{grid-row:span 3;margin-top:2px}
+.note>*:not(svg){grid-column:2}
+.note b.t{font-weight:700}
+.note.warn{background:var(--amberbg);border-color:var(--amberline);color:var(--ink)} .note.warn>svg,.note.warn b.t{color:var(--amber)}
+.note.err{background:var(--redbg);border-color:var(--redline)} .note.err>svg,.note.err b.t{color:var(--red)}
+.note.info{background:var(--bluebg);border-color:var(--blueline)} .note.info>svg,.note.info b.t{color:var(--blue)}
+.note.ok{background:var(--fill2);border-color:transparent} .note.ok>svg,.note.ok b.t{color:var(--strong)}
+.note .btn{margin-top:8px}
+.chip{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:.7em;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:3px 9px;white-space:nowrap;border:1px solid var(--line);color:var(--mute);background:var(--paper)}
+.chip.ai{background:var(--strong);color:var(--onstrong);border-color:var(--strong)}
+.chip.hi{background:var(--fill2);color:var(--strong);border-color:transparent}
+.chip.mid{background:var(--amberbg);color:var(--amber);border-color:var(--amberline)}
+.chip.lo{background:var(--redbg);color:var(--red);border-color:var(--redline)}
+.chip.demo{background:var(--demobg);color:var(--demo);border:1px dashed var(--demo)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ph{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:1;background:var(--fill)}
 .ph svg,.ph img{width:100%;height:100%;display:block;object-fit:cover}
-.ph .cap{position:absolute;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);color:#fff;font-size:.72em;padding:3px 6px;line-height:1.25}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.sample{border:2px solid var(--line);background:var(--card);border-radius:12px;padding:6px;display:grid;gap:4px;text-align:left}
-.sample[aria-pressed="true"]{border-color:var(--pri);background:var(--pri2)}
-.sample b{font-size:.86em}
-.sample span{font-size:.74em;color:var(--mute)}
-.cand{border:2px solid var(--line);border-radius:14px;padding:10px;display:grid;gap:8px;background:var(--card)}
-.cand.sel{border-color:var(--pri)}
-.cand label.head{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;cursor:pointer}
-.cand input[type=radio]{width:22px;height:22px;accent-color:var(--pri)}
-.meter{height:8px;background:var(--line);border-radius:4px;overflow:hidden}
-.meter i{display:block;height:100%;background:var(--pri)}
-.meter.mid i{background:var(--warn)} .meter.lo i{background:var(--err)}
-.la{font-style:italic;color:var(--mute);font-size:.88em}
-.pct{font-weight:800;font-size:1.1em;text-align:right}
-label.f{display:grid;gap:4px;font-weight:600}
-label.f .h{font-weight:400;font-size:.84em;color:var(--mute)}
-input[type=text],input[type=search],select,textarea{border:1px solid var(--line);background:var(--card);border-radius:10px;min-height:44px;padding:8px 10px;width:100%}
-.err-t{color:var(--err);font-size:.86em;font-weight:600}
-fieldset{border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin:0;display:grid;gap:6px}
-legend{font-weight:600;padding:0 4px}
-.opts{display:flex;flex-wrap:wrap;gap:6px}
-.opts label{border:1px solid var(--line);border-radius:999px;padding:6px 12px;display:flex;gap:6px;align-items:center;min-height:40px;background:var(--card)}
-.opts input{accent-color:var(--pri)}
-.sw{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
-.sw input{width:22px;height:22px;accent-color:var(--pri);flex:none;margin-top:1px}
-.prog{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
-.prog i{display:block;height:100%;background:var(--pri);transition:width .3s}
-.steps{margin:0;padding-left:20px;display:grid;gap:4px}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:66px;width:calc(100% - 32px);max-width:408px;background:var(--ink);color:var(--app);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:center;z-index:9;box-shadow:0 4px 16px rgba(0,0,0,.25)}
-.toast p{flex:1}
-.toast button{background:transparent;color:inherit;border:2px solid currentColor;border-radius:10px;min-height:40px;padding:0 10px;font-weight:700}
-.plant{display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;text-align:left;width:100%;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:8px}
-.plant .ph{width:64px}
-details{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--card)}
-details summary{cursor:pointer;font-weight:600;min-height:32px;display:flex;align-items:center}
-table{border-collapse:collapse;width:100%;font-size:.86em}
-td,th{border:1px solid var(--line);padding:5px 6px;text-align:left;vertical-align:top}
-.tier{border-left:4px solid var(--pri);padding:6px 10px;display:grid;gap:4px}
-.tier.bio{border-color:#3b8f8a}.tier.chem{border-color:var(--err)}
-.tier label{display:flex;gap:8px;align-items:flex-start}
-.tier input{width:20px;height:20px;accent-color:var(--pri);flex:none;margin-top:2px}
-.cmp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.hero{background:var(--pri2);border-radius:16px;padding:16px;display:grid;gap:8px}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:.9em}
-.kv b{color:var(--mute);font-weight:600}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ph .cap{position:absolute;left:6px;bottom:6px;max-width:calc(100% - 12px);background:rgba(255,255,255,.92);color:#15241b;font-family:var(--mono);font-size:.66em;padding:2px 7px;border-radius:999px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.demo{border:1.5px dashed var(--demo);background:var(--demobg);border-radius:18px;padding:12px;display:grid;gap:10px}
+.sample{border:2px solid transparent;background:var(--paper);border-radius:16px;padding:6px 6px 8px;display:grid;gap:5px;text-align:left;box-shadow:var(--shadow)}
+.sample[aria-pressed="true"]{border-color:var(--strong);background:var(--fill2)}
+.sample b{font-size:.8em;line-height:1.2;font-weight:600}
+.sample .h{font-family:var(--mono);font-size:.62em;color:var(--mute);line-height:1.3}
+.meter{height:8px;background:var(--fill2);border-radius:4px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--strong);border-radius:4px}
+.meter.mid i{background:var(--amber)} .meter.lo i{background:var(--red)}
+.la{font-style:italic;color:var(--mute)}
+.big-pct{font-family:var(--disp);font-size:2em;font-weight:700;line-height:1}
+.crow{display:grid;grid-template-columns:auto 52px 1fr auto;gap:12px;align-items:center;width:100%;border:1.5px solid var(--line);background:var(--paper);border-radius:16px;padding:8px 12px 8px 10px;text-align:left;cursor:pointer}
+.crow.sel{border-color:var(--strong);background:var(--fill)}
+.crow input{width:20px;height:20px;accent-color:var(--strong);margin:0}
+.crow .ph{border-radius:10px}
+.crow .n{font-weight:600;line-height:1.2}
+.crow .pc{font-family:var(--mono);font-size:.92em}
+label.f{display:grid;gap:6px;font-weight:600}
+label.f .h{font-weight:400;font-size:.85em;color:var(--mute)}
+input[type=text],input[type=search],select,textarea{border:1.5px solid var(--line);background:var(--paper);border-radius:12px;min-height:48px;padding:10px 12px;width:100%}
+[aria-invalid="true"]{border-color:var(--red)!important}
+.err-t{color:var(--red);font-size:.86em;font-weight:600;display:flex;gap:6px;align-items:center}
+fieldset{border:0;padding:0;margin:0;display:grid;gap:8px}
+legend{font-weight:600;padding:0;margin-bottom:8px}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.seg label{border:1.5px solid var(--line);border-radius:12px;min-height:46px;display:grid;place-items:center;background:var(--paper);cursor:pointer;font-weight:500}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--strong);color:var(--onstrong);border-color:var(--strong)}
+.seg label:has(input:focus-visible){outline:3px solid var(--leaf);outline-offset:2px}
+.sw{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+.sw input{width:22px;height:22px;accent-color:var(--strong);flex:none;margin:1px 0 0}
+.prog{height:10px;border-radius:5px;background:var(--fill2);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--strong);transition:width .3s}
+ul.clean{margin:0;padding-left:18px;display:grid;gap:4px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);top:12px;width:calc(100% - 32px);max-width:398px;background:var(--ink);color:var(--panel);border-radius:16px;padding:10px 10px 10px 14px;display:flex;gap:10px;align-items:center;z-index:9;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+@media (min-width:500px){.toast{top:30px}}
+.toast p{flex:1;font-weight:500}
+.toast button{background:transparent;color:inherit;border:1.5px solid currentColor;border-radius:12px;min-height:42px;padding:0 12px;font-weight:700;white-space:nowrap}
+.prow{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;text-align:left;width:100%;border:0;background:var(--paper);border-radius:16px;padding:8px 12px 8px 8px;box-shadow:var(--shadow);outline:1px solid var(--line)}
+.prow .ph{border-radius:10px}
+details.more{border-radius:16px;background:var(--fill);padding:4px 14px}
+details.more summary{cursor:pointer;font-weight:600;min-height:44px;display:flex;align-items:center;gap:8px;list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::after{content:"+";margin-left:auto;font-family:var(--mono);font-size:1.2em}
+details.more[open] summary::after{content:"−"}
+details.more>div{padding:0 0 12px;display:grid;gap:8px}
+table{border-collapse:collapse;width:100%;font-size:.84em}
+td,th{border-bottom:1px solid var(--line);padding:7px 4px;text-align:left;vertical-align:top}
+th{font-family:var(--mono);font-size:.85em;font-weight:500;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.tier{display:grid;gap:8px;padding:12px 14px;border-radius:16px;background:var(--paper);outline:1px solid var(--line)}
+.tier label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.tier input{width:20px;height:20px;accent-color:var(--strong);flex:none;margin-top:2px}
+.tier .lbl{display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.kv{display:grid;gap:10px}
+.kv>div{display:grid;gap:2px}
+.kv b{font-family:var(--mono);font-size:.72em;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:500}
+.kv span{font-size:.92em}
+.thumbs{display:flex;gap:10px;overflow-x:auto;padding-bottom:2px}
+.thumbs>div{width:104px;flex:none;display:grid;gap:6px}
+.thumbs select{min-height:40px;padding:6px 8px;font-size:.82em;border-radius:10px}
+.x{position:absolute;top:6px;right:6px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:#15241b;display:grid;place-items:center}
+.vf{position:relative;border-radius:22px;background:#13201a;aspect-ratio:4/3;overflow:hidden;display:grid;place-items:center;color:#e6efe7}
+.vf .corner{position:absolute;width:28px;height:28px;border:3px solid #fff;opacity:.85}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.spacer{height:4px}
 </style>
 </head>
 <body>
@@ -151,12 +190,12 @@ const DANGER={
 };
 /* F1 nuotraukų pavyzdžiai: kiekvienas parodo kitą veiklos diagramos šaką */
 const F1S=[
-  {id:'mon',img:'mon',t:'Monstera, visas lapas',h:'Bazinis kelias (aukštas tikrumas)',part:'Lapas'},
-  {id:'blur',img:'monBlur',t:'Neryški nuotrauka',h:'K1: netinkama nuotrauka',part:'Lapas',bad:'Nuotrauka neryški ir per tamsi.'},
-  {id:'bar',img:'hog',t:'Barščio lapas pakelėje',h:'K2: žemas tikrumas, pavojinga rūšis',part:'Lapas'},
-  {id:'barZ',img:'umbel',t:'Barščio žiedynas',h:'Pridėjus prie lapo, tikrumas pakyla',part:'Žiedas'},
-  {id:'stem',img:'stem',t:'Tik stiebo dalis',h:'K3: trūksta duomenų, rodoma gentis',part:'Stiebas'},
-  {id:'rose',img:'roseBs',t:'Rožės lapas su dėmėmis',h:'Pasiūlo F2 ligų patikrą',part:'Lapas'},
+  {id:'mon',img:'mon',t:'Monstera',k:'bazinis kelias',part:'Lapas'},
+  {id:'blur',img:'monBlur',t:'Neryški nuotrauka',k:'K1',part:'Lapas',bad:'Nuotrauka neryški ir per tamsi.'},
+  {id:'bar',img:'hog',t:'Barščio lapas',k:'K2 · pavojinga',part:'Lapas'},
+  {id:'barZ',img:'umbel',t:'Barščio žiedynas',k:'+ prie lapo',part:'Žiedas'},
+  {id:'stem',img:'stem',t:'Tik stiebo dalis',k:'K3 · gentis',part:'Stiebas'},
+  {id:'rose',img:'roseBs',t:'Rožės lapas',k:'→ F2',part:'Lapas'},
 ];
 const F1OUT={
   mon:{c:[['mon',94],['ada',4],['philo',2]],reg:[50,46,30]},
@@ -168,10 +207,10 @@ const F1OUT={
 };
 /* F2 */
 const F2S=[
-  {id:'r_bs',img:'roseBs',t:'Lapas su juodomis dėmėmis',h:'Bazinis kelias (ligos kandidatai)',part:'Pažeista dalis'},
-  {id:'r_un',img:'roseUn',t:'Neryškios rudos dėmės',h:'Žemas tikrumas (< 50 %)',part:'Pažeista dalis'},
-  {id:'r_ok',img:'roseOk',t:'Lapas be dėmių',h:'„Ligos požymių nerasta“',part:'Pažeista dalis'},
-  {id:'r_bush',img:'bush',t:'Visas rožės krūmas',h:'Nebūtina, bet didina tikrumą',part:'Visas augalas'},
+  {id:'r_bs',img:'roseBs',t:'Juodos dėmės',k:'bazinis kelias',part:'Pažeista dalis'},
+  {id:'r_un',img:'roseUn',t:'Neryškios dėmės',k:'žemas tikrumas',part:'Pažeista dalis'},
+  {id:'r_ok',img:'roseOk',t:'Lapas be dėmių',k:'ligos nerasta',part:'Pažeista dalis'},
+  {id:'r_bush',img:'bush',t:'Visas krūmas',k:'nebūtina',part:'Visas augalas'},
 ];
 const DIS={
   bs:{lt:'Juodoji rožių dėmėtligė',la:'Diplocarpon rosae',kind:'liga',img:'roseBs',feat:'Juodos dėmės spinduliuotais, plunksniškais kraštais, aplink geltonas audinys; pažeisti lapai anksti nukrenta.',
@@ -262,468 +301,489 @@ function renderToast(){
 }
 const plantById=id=>S.plants.find(p=>p.id===id);
 
-/* ================= SCREENS ================= */
-const T={}; // title
-const V={}; // view
-const TAB={home:0,about:0,intro:-1,f1cap:1,f1bad:1,an:-1,f1off:-1,f1cancel:1,f1res:1,f1why:1,f1cat:1,f1low:1,f1saved:1,plants:3,plant:3,chg:3,chgok:3,f2pick:2,f2cap:2,f2res:2,f2why:2,f2rej:2,f2closed:2,f2plan:2,f2done:2,f2spec:2,f2sent:2,f2re:3,f2reRes:3,f2end:3,f2bad:3};
+/* ================= IKONOS ================= */
+const IC={
+  home:'<path d="M4 11l8-6 8 6v8H4z"/><path d="M10 19v-5h4v5"/>',
+  cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+  leaf:'<path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l8-8"/>',
+  pulse:'<path d="M3 12h4l2-5 4 10 2-5h6"/>',
+  info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8v.5"/>',
+  warn:'<path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17v.5"/>',
+  check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  img:'<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 16l5-5 4 4 3-3 4 4"/><circle cx="15.5" cy="9" r="1.3"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  redo:'<path d="M5 12a7 7 0 1 0 2-5"/><path d="M5 4v4h4"/>',
+  search:'<circle cx="11" cy="11" r="6"/><path d="M16 16l4 4"/>',
+  bell:'<path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20h4"/>',
+  user:'<circle cx="12" cy="8" r="3.5"/><path d="M5 20c1-4 4-6 7-6s6 2 7 6"/>',
+  trash:'<path d="M5 7h14M9 7V5h6v2M7 7l1 12h8l1-12"/>',
+  edit:'<path d="M5 19l1-4 10-10 3 3-10 10z"/>',
+  clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  shield:'<path d="M12 3l7 3v6c0 4-3 7-7 9-4-2-7-5-7-9V6z"/>',
+  chev:'<path d="M9 6l6 6-6 6"/>',
+  wifi:'<path d="M4 9a12 12 0 0 1 16 0M7 12.5a7.5 7.5 0 0 1 10 0M10 16a3 3 0 0 1 4 0"/><path d="M12 19.5v.1"/>',
+};
+const I=(n,s=20)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
+const note=(kind,icon,title,body='',extra='')=>`<div class="note ${kind}" ${kind==='err'||kind==='warn'?'role="alert"':''}>${I(icon,20)}<b class="t">${title}</b>${body?`<p class="small">${body}</p>`:''}${extra}</div>`;
 
-/* ---------- Pradžia ---------- */
+/* ================= EKRANAI ================= */
+const T={}; // pavadinimas
+const V={}; // turinys
+const ACT={}; // apatiniai veiksmai (lipnūs)
+const TAB={home:0,about:0,guide:0,intro:-1,f1cap:1,f1bad:1,an:-1,f1off:-1,f1cancel:-1,f1res:1,f1why:1,f1cat:1,f1low:1,f1saved:1,plants:3,plant:3,chg:3,chgok:3,f2pick:2,f2cap:2,f2res:2,f2why:2,f2rej:2,f2closed:2,f2plan:2,f2done:2,f2spec:2,f2sent:2,f2re:3,f2reRes:3,f2end:3,f2bad:3};
+
+/* ---------- Pradžia (informacinis) ---------- */
 T.home='Augalai';
 V.home=()=>`
-<div class="hero">
-  <h2>Augalų pagalbininkas telefone</h2>
-  <p>Lietuviška programėlė, kuri iš nuotraukos padeda <b>atpažinti augalą</b> ir <b>patikrinti, ar jis serga</b>. DI tik siūlo: visada matai, kiek jis tikras, ir galutinį sprendimą priimi tu.</p>
-  <p class="small mute">Be reklamų, be dienos limito, be privalomos paskyros. Vieta ir nuotraukų naudojimas mokymui išjungti, kol pats neįjungsi.</p>
+<div>
+  <h2>Labas!</h2>
+  <p class="mute">Atpažink augalą ir patikrink, ar jis serga. DI pasiūlo, sprendžia žmogus.</p>
 </div>
-${S.queue.length?`<div class="note warn"><b>Eilėje laukia ${S.queue.length} nuotrauka</b><p>Bus išsiųsta analizei, kai atsiras ryšys.</p><button class="btn" data-a="queueSend">Siųsti dabar</button></div>`:''}
+${S.queue.length?note('warn','wifi','1 nuotrauka laukia eilėje','Išsiųsime analizei, kai atsiras ryšys.',`<button class="btn" data-a="queueSend">Siųsti dabar</button>`):''}
+<section class="card hero">
+  <span class="lbl">F1 · Atpažinimas</span>
+  <h3 style="font-size:1.25em">Koks čia augalas?</h3>
+  <p class="small mute">Nufotografuok lapą, žiedą arba visą augalą. Gausi iki 3 kandidatų su tikrumu ir skiriamaisiais požymiais. Rūšį patvirtini tu.</p>
+  <button class="btn pri big" data-a="startF1">${I('cam',22)} Atpažinti augalą</button>
+</section>
+<section class="card">
+  <span class="lbl">F2 · Ligų patikra</span>
+  <h3 style="font-size:1.25em">Ar augalas serga?</h3>
+  <p class="small mute">Nufotografuok pažeistą lapą. DI pažymi dėmes ir pasiūlo veiksmus: pirmiausia nekenksmingus. Ar gydyti, sprendi tu.</p>
+  <button class="btn big" data-a="startF2">${I('pulse',22)} Patikrinti augalą</button>
+</section>
+<div class="row" style="justify-content:space-between"><h3>Mano augalai</h3><span class="small mute">${S.plants.length} augal.</span></div>
+${S.plants.length?S.plants.slice(0,3).map(plantRow).join(''):`<div class="card soft" style="text-align:center"><p class="small mute">Dar neturi išsaugotų augalų.<br>Atpažintas augalas atsiras čia.</p></div>`}
+<div class="grid2">
+  <button class="card" style="text-align:left;border:0" data-a="go" data-v="about">${I('info',22)}<b>Kaip veikia DI?</b><span class="xs mute">Modeliai, duomenys, tikrumas, klaidos</span></button>
+  <button class="card" style="text-align:left;border:0" data-a="go" data-v="guide">${I('user',22)}<b>Vertintojams</b><span class="xs mute">Personos ir kaip pasiekti kiekvieną šaką</span></button>
+</div>
+<p class="xs mute" style="text-align:center">Be reklamų · be dienos limito · be paskyros · vieta išjungta</p>`;
+const plantRow=p=>`<button class="prow" data-a="openPlant" data-v="${p.id}">${ph(p.img,'','',p.url)}<span><b>${SP[p.sp].lt}</b><br><span class="la small">${SP[p.sp].la}</span>${p.treat?`<br><span class="xs mute">Gydoma: ${DIS[p.treat.d].lt}</span>`:''}</span>${I('chev',18)}</button>`;
+
+/* ---------- Vertintojų gidas ---------- */
+T.guide='Vertintojams';
+V.guide=()=>`
 <div class="card">
-  <span class="chip ai" style="justify-self:start">F1 · DI funkcija</span>
-  <h3>„Kas čia per augalas?“</h3>
-  <p class="small">Nufotografuok lapą, žiedą ar visą augalą. Gausi iki 3 kandidatų su tikrumu, palyginamosiomis nuotraukomis ir skiriamaisiais požymiais. Rūšį patvirtini tu.</p>
-  <p class="small mute">Persona: <b>Gintarė, 44 m.</b>, gėlių parduotuvės konsultantė. Jai reikia „antrosios nuomonės“ per kelias sekundes ir galimybės pataisyti DI.</p>
-  <button class="btn pri" data-a="startF1">📷 Atpažinti augalą</button>
+  <span class="lbl">Personos</span>
+  <p class="small"><b>F1 · Gintarė, 44 m.</b> Gėlių parduotuvės konsultantė. Daugumą augalų atpažįsta pati, programėlę naudoja abejotinais atvejais kaip „antrąją nuomonę“: nori 3 kandidatų su tikrumu ir skiriamaisiais požymiais bei galimybės pataisyti DI.</p>
+  <p class="small"><b>F2 · Algis, 61 m.</b> Sodininkas mėgėjas, rožės ir obelys. Nori purkšti tik tada, kai reikia, ir pasitiki tik matydamas įrodymą: pažymėtas dėmes, panašias nuotraukas, šaltinį. Naudoja didelį šriftą (mygtukas „Aa“ pradžioje).</p>
 </div>
 <div class="card">
-  <span class="chip ai" style="justify-self:start">F2 · DI funkcija</span>
-  <h3>„Kas negerai su mano augalu?“</h3>
-  <p class="small">Nufotografuok pažeistą lapą. DI pažymi dėmes, pasiūlo iki 3 ligų su tikrumu ir veiksmus nuo nekenksmingų iki cheminių. Ar gydyti, sprendi tu.</p>
-  <p class="small mute">Persona: <b>Algis, 61 m.</b>, sodininkas mėgėjas. Nori purkšti tik tada, kai tikrai reikia, ir pamatyti įrodymą.</p>
-  <button class="btn pri" data-a="startF2">🩺 Patikrinti, ar augalas serga</button>
+  <span class="lbl">Kaip išbandyti</span>
+  <p class="small">Kamera imituojama: pasirink <b>pavyzdinę nuotrauką</b>, kiekviena parodo kitą veiklos diagramos šaką. Galima įkelti ir savo JPG/PNG (rodomas pavyzdinis rezultatas). Violetiniai brūkšniniai valdikliai egzistuoja tik prototipe.</p>
+  <table>
+  <tr><th>Šaka</th><th>Kaip pasiekti</th></tr>
+  <tr><td>F1 bazinis kelias</td><td>„Monstera“ → Tai mano augalas</td></tr>
+  <tr><td>A1 galerija, 2–3 nuotr.</td><td>Pažymėk kelias nuotraukas arba „Galerija“</td></tr>
+  <tr><td>A2 kitas kandidatas</td><td>Rezultate paliesk 2-ą ar 3-ią kandidatą</td></tr>
+  <tr><td>A3 „Kodėl?“</td><td>Rezultate „Kodėl?“</td></tr>
+  <tr><td>A4 katalogas be DI</td><td>Rezultate „Nė vienas netinka“</td></tr>
+  <tr><td>A5 atgal / ištrinti</td><td>„‹ Atgal“; Mano augalai → Ištrinti</td></tr>
+  <tr><td>K1 netinkama nuotrauka</td><td>„Neryški nuotrauka“</td></tr>
+  <tr><td>K2 žemas tikrumas</td><td>„Barščio lapas“, po to pridėk „Barščio žiedynas“</td></tr>
+  <tr><td>K3 trūksta duomenų</td><td>„Tik stiebo dalis“</td></tr>
+  <tr><td>K4 klaida pastebėta vėliau</td><td>Mano augalai → augalas → Pakeisti rūšį</td></tr>
+  <tr><td>K5 atšaukimas</td><td>„Atšaukti“ analizės metu arba 10 s po išsaugojimo</td></tr>
+  <tr><td>K6 &gt; 10 s / be ryšio</td><td>Įjunk „Imituoti silpną ryšį“</td></tr>
+  <tr><td>F2 bazinis kelias</td><td>F1 „Rožės lapas“ → Patikrinti ligą → „Juodos dėmės“</td></tr>
+  <tr><td>F2 žemas tikrumas</td><td>„Neryškios dėmės“</td></tr>
+  <tr><td>F2 ligos nerasta</td><td>„Lapas be dėmių“</td></tr>
+  <tr><td>F2 atmesti diagnozę</td><td>Rezultate „Ne ta liga“</td></tr>
+  <tr><td>F2 trūksta rūšies</td><td>Ligų patikra, kai Mano augalai tuščia</td></tr>
+  <tr><td>F2 po 7 d.</td><td>Išsaugok sprendimą → „Imituoti: praėjo 7 d.“</td></tr>
+  </table>
 </div>
-<div class="card">
-  <h3>Kaip veikia DI ir kodėl juo galima pasitikėti?</h3>
-  <ul class="steps small">
-    <li>Tikrumas rodomas procentais ir žodžiu: <b>aukštas ≥ 80 %</b>, <b>vidutinis 50–79 %</b>, <b>žemas &lt; 50 %</b>.</li>
-    <li>Jei tikrumas &lt; 50 % arba du kandidatai skiriasi mažiau nei 15 proc. punktų, sakome „Nesu tikras“ ir paprašome kitos nuotraukos.</li>
-    <li>Prie kiekvieno rezultato yra „Kodėl?“: požymiai ir pažymėta nuotraukos sritis.</li>
-    <li>Pavojingų augalų įspėjimai imami iš patikrintos bazės, ne iš DI.</li>
-  </ul>
-  <button class="btn" data-a="go" data-v="about">Apie DI modelius, duomenis ir klaidas</button>
-</div>
-<details>
-  <summary>Kaip išbandyti prototipą (vertintojams)</summary>
-  <div class="stack small" style="margin-top:6px">
-    <p>Kamera imituojama: vietoj jos pasirink <b>pavyzdinę nuotrauką</b>. Kiekviena nuotrauka parodo kitą veiklos diagramos šaką. Galima įkelti ir savo JPG/PNG (tada rodomas pavyzdinis rezultatas). Violetiniu brūkšniniu rėmeliu pažymėti valdikliai, kurie egzistuoja tik prototipe.</p>
-    <table><tr><th>Šaka</th><th>Kaip pasiekti</th></tr>
-    <tr><td>F1 bazinis kelias</td><td>„Monstera, visas lapas“ → Tai mano augalas</td></tr>
-    <tr><td>A1 galerija, 2–3 nuotr.</td><td>Pasirink kelias nuotraukas arba „Įkelti iš galerijos“</td></tr>
-    <tr><td>A2 kitas kandidatas</td><td>Rezultate pažymėk 2-ą ar 3-ią kandidatą</td></tr>
-    <tr><td>A3 „Kodėl?“</td><td>Rezultate „Kodėl?“</td></tr>
-    <tr><td>A4 katalogas be DI</td><td>Rezultate „Nė vienas netinka“</td></tr>
-    <tr><td>A5 atgal / ištrinti</td><td>Mygtukas ‹ viršuje; „Mano augalai“ → Ištrinti</td></tr>
-    <tr><td>K1 netinkama nuotrauka</td><td>„Neryški nuotrauka“</td></tr>
-    <tr><td>K2 žemas tikrumas</td><td>„Barščio lapas“ (paskui pridėk „Barščio žiedynas“)</td></tr>
-    <tr><td>K3 trūksta duomenų</td><td>„Tik stiebo dalis“</td></tr>
-    <tr><td>K4 neteisinga rūšis vėliau</td><td>„Mano augalai“ → augalas → Pakeisti rūšį</td></tr>
-    <tr><td>K5 atšaukimas</td><td>„Atšaukti“ analizės metu arba 10 s po išsaugojimo</td></tr>
-    <tr><td>K6 &gt; 10 s / be ryšio</td><td>Įjunk „Imituoti silpną ryšį“ prieš analizę</td></tr>
-    <tr><td>F2 bazinis kelias</td><td>„Rožės lapas su dėmėmis“ F1 → Patikrinti ligą → „Lapas su juodomis dėmėmis“</td></tr>
-    <tr><td>F2 žemas tikrumas</td><td>„Neryškios rudos dėmės“</td></tr>
-    <tr><td>F2 ligos nerasta</td><td>„Lapas be dėmių“</td></tr>
-    <tr><td>F2 atmesti diagnozę</td><td>Rezultate „Ne ta liga“</td></tr>
-    <tr><td>F2 trūksta rūšies</td><td>„Ligų patikra“, kai „Mano augalai“ tuščia → F1</td></tr>
-    <tr><td>F2 po 7 d. gerėja / negerėja</td><td>Įjunk priminimą → „Mano augalai“ → „Imituoti: praėjo 7 d.“</td></tr>
-    </table>
-    <button class="btn ghost" data-a="reset">Pradėti iš naujo (išvalyti duomenis)</button>
-  </div>
-</details>`;
+<button class="btn" data-a="reset">${I('redo')} Pradėti iš naujo (išvalyti duomenis)</button>`;
 
 /* ---------- Apie DI ---------- */
-T.about='Apie DI modelius';
+T.about='Kaip veikia DI';
 V.about=()=>`
-<h2>Apie DI modelius</h2>
-<p class="small mute">Prototipe DI rezultatai imituojami pavyzdiniais duomenimis. Žemiau aprašyta, kaip veiktų tikri modeliai.</p>
-<div class="card"><h3>F1. Augalo atpažinimas</h3>
-<div class="kv">
-<b>Uždavinys</b><span>Vaizdų klasifikavimas į daug klasių (top-3 rūšys su kalibruotu tikrumu). Prieš jį veikia nuotraukos kokybės klasifikatorius: ryški / neryški, augalas / ne augalas, kuri augalo dalis.</span>
-<b>Modelis</b><span>Esamas atpažinimo modelis per API (pvz., Pl@ntNet tipo), papildomai suderintas Lietuvos augalijai. Tikrumas kalibruojamas (temperature scaling), kad 80 % reikštų „teisinga ~8 iš 10 kartų“.</span>
-<b>Duomenys</b><span>Viešas rinkinys (PlantNet-300K, iNaturalist stebėjimai Lietuvoje) + Lietuvos augalijos nuotraukos, ypač panašios ir pavojingos rūšys (barščiai). Kokybės modeliui – specialiai sugadintos (neryškios, tamsios) nuotraukos.</span>
-<b>Žymės</b><span>Rūšies lotyniškas pavadinimas (taksonas), gentis, augalo dalis (lapas / žiedas / stiebas / visas), kokybė (tinkama / netinkama). Naudotojų patvirtinimai ir pataisymai – papildomos žymės; specialisto (pvz., Gintarės) pataisymas turi didesnį svorį. Nuotraukos mokymui naudojamos tik su sutikimu.</span>
-<b>Slenksčiai</b><span>Aukštas ≥ 80 %, vidutinis 50–79 %, žemas &lt; 50 %. „Nesu tikras“, kai top-1 &lt; 50 % arba top-1 ir top-2 skiriasi &lt; 15 proc. punktų.</span>
+<p class="small mute">Prototipe DI rezultatai imituojami pavyzdiniais duomenimis. Čia aprašyta, kaip veiktų tikri modeliai.</p>
+<div class="card">
+  <div class="chips"><span class="chip ai">F1</span><h3>Augalo atpažinimas</h3></div>
+  <div class="kv">
+  <div><b>Uždavinio tipas</b><span>Vaizdų klasifikavimas į daug klasių: top-3 rūšys su kalibruotu tikrumu. Prieš tai veikia nuotraukos kokybės klasifikatorius (ryški / neryški, augalas / ne, kuri augalo dalis).</span></div>
+  <div><b>Modelis</b><span>Esamas atpažinimo modelis per API (ne kuriamas savas), suderintas Lietuvos augalijai. Tikrumas kalibruojamas (temperature scaling): 80 % reiškia „teisinga maždaug 8 iš 10 kartų“.</span></div>
+  <div><b>Duomenų rinkinys</b><span>PlantNet-300K ir iNaturalist stebėjimai Lietuvoje, papildyti panašiomis ir pavojingomis rūšimis (barščiai). Kokybės modeliui – dirbtinai sugadintos nuotraukos (neryškios, tamsios).</span></div>
+  <div><b>Žymės</b><span>Rūšies lotyniškas pavadinimas, gentis, augalo dalis, kokybė (tinkama / netinkama). Naudotojų patvirtinimai ir pataisymai – papildomos žymės, specialisto pataisymas turi didesnį svorį. Nuotraukos mokymui – tik su sutikimu.</span></div>
+  <div><b>Slenksčiai</b><span>Aukštas ≥ 80 %, vidutinis 50–79 %, žemas &lt; 50 %. „Nesu tikras“, kai top-1 &lt; 50 % arba top-1 ir top-2 skiriasi &lt; 15 proc. punktų.</span></div>
+  </div>
+  ${note('info','shield','Brangesnė klaida: klaidingai teigiama (FP)','Užtikrintai pasakyta neteisinga rūšis (pvz., Mantegacio vietoj Sosnovskio barščio) keliauja į ligų patikrą ir priežiūrą, o pavojingos rūšies supainiojimas kenkia sveikatai. FN („neatpažinta“) tik palieka be atsakymo, tada siūlome nuotrauką ar katalogą. Todėl juostai „Aukštas“ prioritetas yra <b>precision</b>, o top-3 <b>recall</b> užtikrina, kad teisinga rūšis būtų tarp kandidatų.')}
 </div>
-<div class="note info"><b>Kuri klaida brangesnė: FP ar FN?</b>
-<p class="small"><b>Brangesnė yra klaidingai teigiama (FP)</b>: užtikrintai pasakyta neteisinga rūšis (pvz., pothos vietoj monsteros, Mantegacio vietoj Sosnovskio barščio). Naudotojas aukštu tikrumu pasitiki aklai, klaida keliauja į F2–F4, o pavojingos rūšies supainiojimas kenkia sveikatai. FN („neatpažinta“) tik palieka be atsakymo, o mes tada siūlome papildomą nuotrauką ar katalogą.</p>
-<p class="small"><b>Todėl:</b> juostai „Aukštas“ prioritetas – <b>precision</b> (geriau „Nesu tikras“ nei užtikrinta klaida), o top-3 <b>recall</b> užtikrina, kad teisinga rūšis būtų tarp kandidatų. Rūšis išsaugoma tik naudotojui patvirtinus (HITL).</p></div>
+<div class="card">
+  <div class="chips"><span class="chip ai">F2</span><h3>Ligų patikra</h3></div>
+  <div class="kv">
+  <div><b>Uždavinio tipas</b><span>Klasifikavimas (iki 3 ligų ar kenkėjų + klasė „ligos požymių nerasta“) ir objektų aptikimas (pažeistų vietų žymėjimas). Gydymo veiksmai – iš patikrintos bazės pagal patvirtintą diagnozę.</span></div>
+  <div><b>Duomenų rinkinys</b><span>PlantVillage ir PlantDoc + Lietuvos sodų nuotraukos (rožės, obelys, daržovės), pažymėtos su augalų apsaugos specialistais; kiekvienai ligai – ir panašūs „ne ligos“ atvejai.</span></div>
+  <div><b>Žymės</b><span>Ligos ar kenkėjo klasė, „ne liga“ klasės (maisto medžiagų trūkumas, saulės nudegimas), pažeistų vietų rėmeliai, rūšis iš F1, specialisto patvirtinimas, „gerėja / negerėja“ po 7 d.</span></div>
+  <div><b>Slenksčiai</b><span>&lt; 50 % – būsena „Neaišku“, chemijos nėra, siūloma nauja nuotrauka arba specialistas. Cheminės priemonės – tik ≥ 50 % ir patvirtinus. Žodžio „Sveikas“ nenaudojame.</span></div>
+  </div>
+  ${note('info','shield','Brangesnė klaida: klaidingai neigiama (FN)','Praleista liga plinta ir sunaikina derlių (ND1: „Healthy!“ sergančiam lapui, PR-19). FP kainuoja mažiau, nes pirmiausia siūlomi nekenksmingi veiksmai, o chemija tik patvirtinus. Todėl prioritetas yra <b>recall</b> būsenai „serga“.')}
 </div>
-<div class="card"><h3>F2. Ligų patikra</h3>
-<div class="kv">
-<b>Uždavinys</b><span>Klasifikavimas (iki 3 ligų ar kenkėjų su tikrumu + klasė „ligos požymių nerasta“) ir objektų aptikimas (pažeistų vietų žymėjimas). Gydymo veiksmai imami iš patikrintos bazės pagal patvirtintą diagnozę.</span>
-<b>Duomenys</b><span>PlantVillage ir PlantDoc rinkiniai + Lietuvos sodų nuotraukos (rožės, obelys, daržovės), surinktos su augalų apsaugos specialistais; kiekvienai ligai – ir panašūs „ne ligos“ atvejai (maisto medžiagų trūkumas, saulės nudegimas).</span>
-<b>Žymės</b><span>Ligos / kenkėjo klasė, „ne liga“ klasės, „sveika“, pažeistų vietų rėmeliai (bounding box), augalo rūšis iš F1, specialisto patvirtinimas, „gerėja / negerėja“ po 7 d.</span>
-<b>Slenksčiai</b><span>Diagnozė su chemija rodoma tik ≥ 50 % ir patvirtinus. &lt; 50 % – būsena „Neaišku“, chemijos nėra, siūloma nauja nuotrauka arba specialistas. „Sveikas“ niekada nerašome.</span>
-</div>
-<div class="note info"><b>Kuri klaida brangesnė: FP ar FN?</b>
-<p class="small"><b>Brangesnė yra klaidingai neigiama (FN)</b>: augalas serga, o DI ligos neranda (kaip PictureThis „Healthy!“ sergančiam lapui, ND1 PR-19). Liga plinta, prarandamas derlius. FP (liga sveikam augalui) kainuoja mažiau, nes pirmiausia siūlomi nekenksmingi veiksmai, o chemija – tik patvirtinus.</p>
-<p class="small"><b>Todėl:</b> prioritetas – <b>recall</b> būsenai „serga“: „Galimai serga“ rodome jau nuo vidutinio tikrumo, o „Ligos požymių nerasta“ visada su tikrumu ir priminimu pakartoti.</p></div>
-</div>
-<div class="card"><h3>Žmogaus kontrolė (HITL) ir gairės</h3>
-<table>
-<tr><th>Kur</th><th>Ką tvirtina žmogus</th></tr>
-<tr><td>F1</td><td>„Tai mano augalas“: rūšis įrašoma ir perduodama F2 tik patvirtinus; žemam tikrumui – papildomas patvirtinimas su įspėjimu</td></tr>
-<tr><td>F2</td><td>„Panašu“ (diagnozė), veiksmų pasirinkimas, priminimo įjungimas, „gerėja / negerėja“</td></tr>
-<tr><td>Abi</td><td>„Atšaukti“ 10 s, rūšies keitimas, ištrynimas, katalogas be DI</td></tr>
-</table>
-<p class="small mute">Atitinka ND1 kontrolinio sąrašo Microsoft HAI gaires: G1–G2 (ką DI moka ir kaip gerai), G4 (rodyti kontekstinę informaciją), G8–G9 (lengvai atmesti ir pataisyti), G10 (abejojant paklausti), G11 (paaiškinti kodėl), G15–G16 (grįžtamasis ryšys), taip pat Nielseno klaidų prevencijos ir atstatymo principus.</p>
+<div class="card">
+  <h3>Žmogaus kontrolė (HITL)</h3>
+  <ul class="clean small">
+  <li><b>F1:</b> rūšis išsaugoma ir perduodama F2 tik paspaudus „Tai mano augalas“; žemam tikrumui reikia papildomo patvirtinimo.</li>
+  <li><b>F2:</b> diagnozę patvirtina „Panašu“, veiksmus renkasi pats, priminimą įjungia pats, „gerėja / negerėja“ vertina pats.</li>
+  <li><b>Abi:</b> „Atšaukti“ 10 s, rūšies keitimas, ištrynimas, katalogas be DI, specialistas.</li>
+  </ul>
+  <p class="xs mute">Remiamasi ND1 kontroliniu sąrašu: Microsoft HAI gairės G1–G2, G4, G8–G11, G15–G16, Nielseno klaidų prevencija ir atstatymas, WCAG 2.2 (etiketės, kontrastas, 44 px tiksliniai plotai, didelis šriftas).</p>
 </div>`;
 
-/* ---------- Privatumas prieš pirmą nuotrauką ---------- */
+/* ---------- Privatumas ---------- */
 T.intro='Prieš pirmą nuotrauką';
 V.intro=()=>`
 <h2>Kas bus siunčiama?</h2>
-<div class="card small">
-  <p>✔ Siunčiama <b>tik nuotrauka</b> (ir tavo atsakymai, jei juos pateiksi).</p>
-  <p>✔ <b>GPS ir kiti metaduomenys pašalinami</b> dar telefone.</p>
-  <p>✔ Atšaukus analizę nuotrauka ištrinama iš serverio.</p>
+<div class="card soft">
+  <p class="small row">${I('check',18)} Tik nuotrauka ir tavo atsakymai</p>
+  <p class="small row">${I('check',18)} GPS ir metaduomenys pašalinami telefone</p>
+  <p class="small row">${I('check',18)} Atšaukus analizę nuotrauka ištrinama</p>
 </div>
 <div class="card">
-  <label class="sw"><input type="checkbox" data-a="tog" data-v="loc" ${S.loc?'checked':''}><span><b>Naudoti apytikslį regioną</b><br><span class="small mute">Padeda atskirti Lietuvoje augančias rūšis. Išjungta pagal nutylėjimą.</span></span></label>
-  <label class="sw"><input type="checkbox" data-a="tog" data-v="train" ${S.train?'checked':''}><span><b>Leisti naudoti mano nuotraukas ir pataisymus modeliui gerinti</b><br><span class="small mute">Neprivaloma. Galėsi pakeisti bet kada.</span></span></label>
-  <label class="sw"><input type="checkbox" data-a="tog" data-v="expert" ${S.expert?'checked':''}><span><b>Esu augalų specialistas (-ė)</b><br><span class="small mute">Tavo pataisymai bus pažymėti eksperto žyma ir turės didesnį svorį.</span></span></label>
+  <label class="sw"><input type="checkbox" data-a="tog" data-v="loc" ${S.loc?'checked':''}><span><b>Naudoti apytikslį regioną</b><br><span class="small mute">Padeda atskirti Lietuvoje augančias rūšis.</span></span></label>
+  <label class="sw"><input type="checkbox" data-a="tog" data-v="train" ${S.train?'checked':''}><span><b>Leisti nuotraukas ir pataisymus naudoti modeliui gerinti</b><br><span class="small mute">Neprivaloma, galėsi pakeisti.</span></span></label>
+  <label class="sw"><input type="checkbox" data-a="tog" data-v="expert" ${S.expert?'checked':''}><span><b>Esu augalų specialistas (-ė)</b><br><span class="small mute">Pataisymai gaus eksperto žymą.</span></span></label>
 </div>
-<button class="btn pri" data-a="introOk">Supratau, tęsti</button>`;
+<p class="xs mute">Viskas išjungta, kol pats neįjungsi.</p>`;
+ACT.intro=()=>`<button class="btn pri big" data-a="introOk">Supratau, tęsti</button>`;
 
 /* ---------- F1: nuotraukos ---------- */
 T.f1cap='Atpažinti augalą';
 V.f1cap=()=>{const f=S.f1;const sel=id=>f.photos.some(p=>p.sample===id);
 return `
-<h2>Nufotografuok augalą</h2>
-<p class="small mute">1–3 nuotraukos: lapas, žiedas arba visas augalas. Patarimas: nufotografuok visą lapą iš arti, šviesoje.</p>
-<div class="demo"><span class="tag">Prototipas: kameros imitacija</span>
-<p class="small">Pasirink pavyzdinę nuotrauką (galima kelias, iki 3):</p>
-<div class="grid3">${F1S.map(s=>`<button class="sample" data-a="f1pick" data-v="${s.id}" aria-pressed="${sel(s.id)}">${ph(s.img)}<b>${s.t}</b><span>${s.h}</span></button>`).join('')}</div>
-<label class="sw"><input type="checkbox" data-a="tog" data-v="slow" ${S.slow?'checked':''}><span class="small"><b>Imituoti silpną ryšį</b> (K6: analizė užtrunka &gt; 10 s)</span></label>
+<p class="mute">1–3 nuotraukos: lapas, žiedas arba visas augalas. Fotografuok visą lapą iš arti, šviesoje.</p>
+<div class="demo">
+  <div class="row" style="justify-content:space-between"><span class="chip demo">Prototipas · kamera</span><span class="xs mute">Pasirink 1–3</span></div>
+  <div class="grid3">${F1S.map(s=>`<button class="sample" data-a="f1pick" data-v="${s.id}" aria-pressed="${sel(s.id)}">${ph(s.img)}<b>${s.t}</b><span class="h">${s.k}</span></button>`).join('')}</div>
+  <label class="sw small"><input type="checkbox" data-a="tog" data-v="slow" ${S.slow?'checked':''}><span>Imituoti silpną ryšį (K6)</span></label>
 </div>
-<label class="btn" style="cursor:pointer">🖼 Įkelti iš galerijos (JPG, PNG)<input type="file" accept="image/*" multiple data-a="f1file" class="sr"></label>
-${f.err?`<p class="err-t" role="alert">⚠ ${esc(f.err)}</p>`:''}
-${f.photos.length?`<div class="card"><h3>Pasirinkta: ${f.photos.length} iš 3</h3>
-${f.photos.map((p,i)=>`<div class="row" style="align-items:flex-start"><div style="width:72px;flex:none">${ph(p.img,'',``,p.url)}</div>
-<div class="stack" style="flex:1"><label class="f small">Kuri augalo dalis? <select data-a="f1part" data-i="${i}">${['Lapas','Žiedas','Stiebas','Visas augalas'].map(o=>`<option ${o===p.part?'selected':''}>${o}</option>`).join('')}</select></label></div>
-<button class="ib" data-a="f1rm" data-i="${i}" aria-label="Pašalinti nuotrauką">✕</button></div>`).join('')}
-${f.photos.length===1?`<p class="small mute">💡 Pridėjus žiedo ar viso augalo nuotrauką, panašias rūšis atskirti lengviau.</p>`:''}
-</div>`:`<p class="small mute">Dar nepasirinkta nė viena nuotrauka.</p>`}
-<button class="btn pri" data-a="f1analyze" ${f.photos.length?'':'disabled'}>Analizuoti ${f.photos.length>1?f.photos.length+' nuotraukas':'nuotrauką'}</button>`};
+${f.err?`<p class="err-t" role="alert">${I('warn',18)} ${esc(f.err)}</p>`:''}
+${f.photos.length?`<div class="stack"><span class="lbl">Pasirinkta ${f.photos.length} iš 3 · pažymėk augalo dalį</span>
+<div class="thumbs">${f.photos.map((p,i)=>`<div><div style="position:relative">${ph(p.img,'','',p.url)}<button class="x" data-a="f1rm" data-i="${i}" aria-label="Pašalinti ${i+1} nuotrauką">${I('x',16)}</button></div>
+<label><span class="sr">${i+1} nuotraukos augalo dalis</span><select data-a="f1part" data-i="${i}">${['Lapas','Žiedas','Stiebas','Visas augalas'].map(o=>`<option ${o===p.part?'selected':''}>${o}</option>`).join('')}</select></label></div>`).join('')}</div>
+${f.photos.length===1?`<p class="xs mute">Patarimas: pridėjus žiedo ar viso augalo nuotrauką, panašias rūšis atskirti lengviau.</p>`:''}</div>`:''}`};
+ACT.f1cap=()=>`<div class="row"><label class="btn" style="flex:0 0 auto;width:auto;cursor:pointer">${I('img')} Galerija<input type="file" accept="image/*" multiple data-a="f1file" class="sr"></label>
+<button class="btn pri" data-a="f1analyze" ${S.f1.photos.length?'':'disabled'}>Analizuoti${S.f1.photos.length>1?' ('+S.f1.photos.length+')':''}</button></div>`;
 
-/* ---------- F1: K1 netinkama nuotrauka ---------- */
+/* ---------- K1 ---------- */
 T.f1bad='Nuotraukos kokybė';
 V.f1bad=()=>{const bad=S.f1.photos.filter(p=>p.bad);return `
-<div class="note warn"><b>Nuotrauka neryški arba per tamsi</b><p>Laikyk telefoną stabiliai, priartink lapą ir fotografuok šviesoje. Analizė dar nepradėta.</p></div>
+${note('warn','warn','Nuotrauka neryški arba per tamsi','Laikyk telefoną stabiliai, priartink lapą ir fotografuok šviesoje. Analizė dar nepradėta.')}
 <div class="grid2">${bad.map(p=>ph(p.img,p.bad,'',p.url)).join('')}</div>
-<p class="small mute">Kokybę patikrino nuotraukos kokybės modelis per &lt; 1 s. Tai nereiškia, kad nuotraukoje nėra augalo.</p>
-<button class="btn pri" data-a="f1retake">📷 Fotografuoti iš naujo</button>
-<button class="btn" data-a="f1anyway">Vis tiek analizuoti</button>
-<p class="small mute">Jei analizuosi, rezultatas bus pažymėtas žemu tikrumu.</p>`};
+<p class="small mute">Tai nereiškia, kad nuotraukoje nėra augalo. Jei analizuosi vis tiek, rezultatas bus pažymėtas žemu tikrumu.</p>`};
+ACT.f1bad=()=>`<button class="btn pri big" data-a="f1retake">${I('cam')} Fotografuoti iš naujo</button><button class="btn" data-a="f1anyway">Vis tiek analizuoti</button>`;
 
-/* ---------- Analizė (bendra F1/F2) ---------- */
+/* ---------- Analizė ---------- */
 T.an='Analizuojama';
 V.an=()=>{const a=S.an;if(!a)return'';const pct=Math.min(100,a.t/a.need*100);
 return `
-<h2>${a.fn==='f1'?(a.stage==='q'?'Tikrinama nuotraukos kokybė…':'Atpažįstama rūšis…'):'Ieškoma ligos požymių…'}</h2>
-<div class="grid3">${a.photos.map(p=>ph(p.img,'',``,p.url)).join('')}</div>
-${a.fn==='f1'&&a.stage!=='q'?`<div class="note ok"><b>✔ Nuotrauka tinkama</b></div>`:''}
-<div class="prog" role="progressbar" aria-valuenow="${Math.round(pct)}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div>
-<p class="small mute">Praėjo ${a.t} s. ${a.fn==='f1'?'Įprastai užtrunka iki 3 s.':'Įprastai užtrunka iki 5 s.'}</p>
-${a.slowAsk?`<div class="note warn" role="alert"><b>Analizė užtrunka</b><p>Ryšys silpnas. Gali palaukti arba atšaukti.${a.waiting?' Jei per 20 s neatsakys, nuotrauką išsaugosime eilėje.':''}</p>
-${a.waiting?'':`<button class="btn pri" data-a="anWait">Laukti</button>`}</div>`:''}
-<button class="btn" data-a="anCancel">Atšaukti analizę</button>`};
+<div class="grid3">${a.photos.map(p=>ph(p.img,'','',p.url)).join('')}</div>
+${a.fn==='f1'&&a.stage!=='q'?note('ok','check','Nuotrauka tinkama'):''}
+<div class="card">
+  <h3>${a.fn==='f1'?(a.stage==='q'?'Tikrinama nuotraukos kokybė…':'Atpažįstama rūšis…'):'Ieškoma ligos požymių…'}</h3>
+  <div class="prog" role="progressbar" aria-label="Analizės eiga" aria-valuenow="${Math.round(pct)}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div>
+  <p class="xs mute">Praėjo ${a.t} s · įprastai iki ${a.fn==='f1'?3:5} s</p>
+</div>
+${a.slowAsk?note('warn','wifi','Analizė užtrunka','Ryšys silpnas. Gali palaukti arba atšaukti.'+(a.waiting?' Jei per 20 s neatsakys, nuotrauką išsaugosime eilėje.':''),a.waiting?'':`<button class="btn pri" data-a="anWait">Laukti</button>`):''}`};
+ACT.an=()=>`<button class="btn" data-a="anCancel">${I('x')} Atšaukti analizę</button>`;
 
 T.f1off='Nėra ryšio';
-V.f1off=()=>`
-<div class="note warn"><b>Nėra ryšio</b><p>Nuotrauka išsaugota eilėje telefone ir bus išsiųsta analizei, kai atsiras ryšys. Pranešime, kai rezultatas bus paruoštas.</p></div>
-<button class="btn pri" data-a="offRetry">Bandyti dar kartą</button>
-<button class="btn" data-a="go" data-v="home">Į pradžią (palikti eilėje)</button>
-<button class="btn danger" data-a="offDel">Atšaukti ir ištrinti nuotrauką</button>`;
+V.f1off=()=>note('warn','wifi','Nėra ryšio','Nuotrauka išsaugota eilėje telefone ir bus išsiųsta, kai atsiras ryšys. Pranešime, kai rezultatas bus paruoštas.');
+ACT.f1off=()=>`<button class="btn pri" data-a="offRetry">${I('redo')} Bandyti dar kartą</button><div class="row"><button class="btn" data-a="home">Palikti eilėje</button><button class="btn danger" data-a="offDel">Ištrinti</button></div>`;
 
 T.f1cancel='Analizė atšaukta';
-V.f1cancel=()=>`
-<div class="note info"><b>Analizė atšaukta</b><p>Nuotrauka ištrinta iš serverio. Niekas neišsaugota.</p></div>
-<button class="btn pri" data-a="${S.cancelFn==='f2'?'f2again':'f1again'}">📷 Nauja nuotrauka</button>
-<button class="btn" data-a="home">Į pradžią</button>`;
+V.f1cancel=()=>note('info','info','Analizė atšaukta','Nuotrauka ištrinta iš serverio. Niekas neišsaugota.');
+ACT.f1cancel=()=>`<button class="btn pri" data-a="${S.cancelFn==='f2'?'f2again':'f1again'}">${I('cam')} Nauja nuotrauka</button><button class="btn" data-a="home">Į pradžią</button>`;
 
 /* ---------- F1: rezultatas ---------- */
-function f1isLow(o){const c=o.c;return o.genus||c[0][1]<50||c[0][1]-c[1][1]<15}
-function dangerNote(keys){const ks=[...new Set(keys.map(k=>SP[k].danger).filter(Boolean))];
-  return ks.map(d=>{const names=keys.filter(k=>SP[k].danger===d).map(k=>SP[k].lt).join(', ');
-  return `<div class="note err" role="alert"><b>⚠ ${DANGER[d].t}</b><p class="small">${esc(names)}: ${DANGER[d].d}</p><p class="small mute">Šaltinis: patikrinta pavojingų augalų bazė (taisyklė, ne DI).</p></div>`}).join('')}
+function f1isLow(o){const c=o.c;return !!o.genus||c[0][1]<50||c[0][1]-c[1][1]<15}
+function dangerNote(keys){const ks=[...new Set(keys.map(k=>SP[k].danger).filter(Boolean))].sort((a,b)=>a==='burn'?-1:1);
+  return ks.map(d=>{const names=keys.filter(k=>SP[k].danger===d).map(k=>SP[k].lt);
+  return note('err','warn',DANGER[d].t,`${names.length>1?'Tarp kandidatų: ':''}${esc(names.join(', '))}. ${DANGER[d].d}`,`<p class="xs mute">Šaltinis: patikrinta pavojingų augalų bazė (taisyklė, ne DI)</p>`)}).join('')}
 T.f1res='Rezultatas';
 V.f1res=()=>{const f=S.f1,o=f.out,low=f1isLow(o),c=o.c;const top=c[0][1],gap=c[0][1]-c[1][1];
-const head=o.genus?`<div class="note warn"><b>Rūšies nustatyti nepavyko, nustatyta gentis</b><p><b>${SP[o.genus].lt}</b> <span class="la">${SP[o.genus].la}</span> · tikrumas ${o.gp} %</p><p class="small">Šios rūšies duomenų turime nedaug: nufotografuota tik dalis augalo. ${o.ask}</p></div>`
- :low?`<div class="note warn"><b>Nesu tikras</b><p class="small">${top<50?`Geriausio kandidato tikrumas tik ${top} % (mažiau nei 50 %).`:''} ${gap<15?`Du pirmi kandidatai skiriasi tik ${gap} proc. punktų (mažiau nei 15).`:''} ${o.poor?'Analizuota prasta nuotrauka.':''}</p><p class="small">${o.ask||'Nufotografuok žiedą, stiebą ar visą augalą ryškiau.'}</p></div>`
- :`<div class="note ok"><b>${BAND(top)[0]} tikrumas</b><p class="small">Palygink nuotraukas ir patvirtink, jei sutampa.</p></div>`;
+const [k,p]=c[f.sel],sp=SP[k],b=BAND(p);
+let head='';
+if(o.genus)head=note('warn','info',`Nustatyta tik gentis: ${SP[o.genus].lt} (${o.gp} %)`,`Šios rūšies duomenų turime nedaug, nes nufotografuota tik dalis augalo. ${o.ask}`,`<button class="btn" data-a="f1add">${I('plus')} Pridėti nuotrauką</button>`);
+else if(low)head=note('warn','info','Nesu tikras',[top<50?`Geriausias kandidatas tik ${top} % (riba 50 %).`:'',gap<15?`Du pirmi skiriasi tik ${gap} p. p. (riba 15).`:'',o.poor?'Analizuota prasta nuotrauka.':''].join(' ')+' '+(o.ask||'Nufotografuok žiedą, stiebą ar visą augalą ryškiau.'),`<button class="btn" data-a="f1add">${I('plus')} Pridėti nuotrauką</button>`);
 return `
-<div class="row"><span class="chip ai">Sugeneruota DI</span><span class="small mute">${f.photos.length} nuotr. · ${f.photos.map(p=>p.part.toLowerCase()).join(', ')}</span></div>
+<div class="row">${ph(f.photos[0].img,'','',f.photos[0].url).replace('class="ph"','class="ph" style="width:56px;flex:none"')}<span class="small mute">Analizuota: ${f.photos.length} nuotr. (${f.photos.map(p=>p.part.toLowerCase()).join(', ')})</span></div>
 ${head}
-${dangerNote(c.map(x=>x[0]))}
-${o.spots?`<div class="note info"><b>Matome dėmių ant lapų</b><p class="small">Patvirtinus rūšį, galėsi patikrinti, ar augalas serga.</p></div>`:''}
-<fieldset style="border:0;padding:0"><legend class="sr">Pasirink kandidatą</legend><div class="stack">
-${c.map(([k,p],i)=>{const sp=SP[k],b=BAND(p);return `<div class="cand ${f.sel===i?'sel':''}">
-<label class="head"><input type="radio" name="cand" data-a="f1sel" data-i="${i}" ${f.sel===i?'checked':''}>
-<span><b>${i+1}. ${sp.lt}</b><br><span class="la">${sp.la}</span></span>
-<span class="pct">${p} %<br><span class="chip ${b[1]}">${b[0]}</span></span></label>
-<div class="meter ${b[1]}"><i style="width:${p}%"></i></div>
-${f.sel===i?`<div class="grid3">${ph(f.photos[0].img,'Tavo',``,f.photos[0].url)}${(sp.cmp||[sp.img,sp.img]).map((im,j)=>ph(im,'Pavyzdys '+(j+1))).join('')}</div>
-<p class="small"><b>Skiriamasis požymis:</b> ${sp.feat}</p>`:''}
-</div>`}).join('')}
-</div></fieldset>
-<div class="row"><button class="btn" data-a="go" data-v="f1why">❔ Kodėl?</button><button class="btn" data-a="f1add">➕ Pridėti nuotrauką</button></div>
-${o.genus?`<button class="btn pri" data-a="f1saveGenus">Išsaugoti kaip gentį (${SP[o.genus].lt})</button><button class="btn" data-a="f1confirm">Tai mano augalas: ${SP[c[f.sel][0]].lt}</button>`
- :`<button class="btn pri" data-a="f1confirm">✔ Tai mano augalas: ${SP[c[f.sel][0]].lt}</button>`}
-<button class="btn" data-a="f1none">Nė vienas netinka: ieškoti kataloge</button>
-<button class="btn ghost" data-a="f1again">📷 Nauja nuotrauka</button>
-<details><summary>Kodėl kartais sakome „Nesu tikras“?</summary><p class="small" style="margin-top:6px">Užtikrintai pasakyta neteisinga rūšis (FP) kainuoja brangiausiai: ja aklai pasitikima, o klaida keliauja į ligų patikrą ir priežiūrą. Todėl aukštą tikrumą rodome tik tada, kai modelis retai klysta, o abejodami prašome dar vienos nuotraukos. <button class="btn ghost small" data-a="go" data-v="about" style="min-height:36px;margin-top:6px">Daugiau apie modelį</button></p></details>`};
+${low?dangerNote(c.map(x=>x[0])):''}
+${o.spots?note('info','pulse','Matome dėmių ant lapų','Patvirtinus rūšį galėsi patikrinti, ar augalas serga.'):''}
+<section class="card">
+  <div class="chips"><span class="chip ai">DI</span><span class="chip ${b[1]}">${b[0]} tikrumas</span>${f.sel?'<span class="chip">Tavo pasirinkimas</span>':''}</div>
+  <div class="row" style="align-items:flex-end;justify-content:space-between"><div><h3 style="font-size:1.3em">${sp.lt}</h3><p class="la">${sp.la}</p></div><span class="big-pct">${p}&nbsp;%</span></div>
+  <div class="meter ${b[1]}"><i style="width:${p}%"></i></div>
+  <p class="xs mute">Palyginamosios nuotraukos iš bazės</p>
+  <div class="grid3">${ph(f.photos[0].img,'tavo','',f.photos[0].url)}${(sp.cmp||[sp.img,sp.img]).map((im,j)=>ph(im,['pavyzdys','iš bazės'][j])).join('')}</div>
+  <p class="small"><b>Skiriamasis požymis:</b> ${sp.feat}</p>
+</section>
+<div class="row"><button class="btn" data-a="go" data-v="f1why">${I('info')} Kodėl?</button><button class="btn" data-a="f1again">${I('redo')} Nauja nuotrauka</button></div>
+<span class="lbl">Kandidatai · paliesk, kad palygintum</span>
+<div class="stack" role="radiogroup" aria-label="Kandidatai">
+${c.map(([kk,pp],i)=>`<label class="crow ${f.sel===i?'sel':''}"><input type="radio" name="cand" data-a="f1sel" data-i="${i}" ${f.sel===i?'checked':''}>${ph(SP[kk].img)}<span><span class="n">${SP[kk].lt}</span><br><span class="la small">${SP[kk].la}</span></span><span class="pc">${pp} %</span></label>`).join('')}
+</div>
+${low?'':dangerNote([k])}
+<button class="link" data-a="f1none">Nė vienas netinka: ieškoti kataloge</button>`};
+ACT.f1res=()=>{const f=S.f1,o=f.out,[k]=o.c[f.sel];
+return o.genus?`<button class="btn pri" data-a="f1saveGenus">Išsaugoti kaip gentį</button><button class="btn" data-a="f1confirm">Vis tiek: ${SP[k].lt}</button>`
+:`<button class="btn pri big" data-a="f1confirm">${I('check')} Tai mano augalas</button>`};
 
 T.f1why='Kodėl šis rezultatas?';
 V.f1why=()=>{const f=S.f1,o=f.out,[k,p]=o.c[f.sel],sp=SP[k],alt=o.c.filter((_,i)=>i!==f.sel);
 return `
-<h2>Kodėl ${esc(sp.lt)}?</h2>
-<div style="max-width:260px">${ph(f.photos[0].img,'Geltonai pažymėta sritis lėmė rezultatą',regOverlay(...o.reg),f.photos[0].url)}</div>
-<div class="card small"><p><b>Ką DI matė:</b> ${sp.feat}</p>
-<p><b>Tikrumas:</b> ${p} % (${BAND(p)[0].toLowerCase()}). ${f1isLow(o)?'Tikrumas žemas arba kandidatai panašūs, todėl verta pridėti nuotrauką.':''}</p>
-<p><b>Kuo skiriasi nuo kitų kandidatų:</b></p>
-<ul class="steps">${alt.map(([a,ap])=>`<li><b>${SP[a].lt}</b> (${ap} %): ${SP[a].feat}</li>`).join('')}</ul>
-<p class="mute">Abejok, kai tikrumas &lt; 50 %, kai kandidatai skiriasi &lt; 15 p. p., kai nufotografuota tik dalis augalo arba jis nežydi.</p></div>
-<button class="btn pri" data-a="back">‹ Grįžti į rezultatą</button>`};
+<div class="ph" style="max-width:280px">${f.photos[0].url?`<img src="${f.photos[0].url}" alt="">`:art(f.photos[0].img)}${regOverlay(...o.reg)}<span class="cap">geltona sritis lėmė rezultatą</span></div>
+<div class="card">
+  <div class="chips"><span class="chip ai">DI</span><span class="chip ${BAND(p)[1]}">${p} % · ${BAND(p)[0]}</span></div>
+  <h3>${sp.lt}</h3>
+  <p class="small"><b>Ką DI matė:</b> ${sp.feat}</p>
+</div>
+<div class="card"><h3>Kuo skiriasi nuo kitų kandidatų</h3>
+<ul class="clean small">${alt.map(([a,ap])=>`<li><b>${SP[a].lt}</b> (${ap} %): ${SP[a].feat}</li>`).join('')}</ul></div>
+<div class="card soft"><p class="small"><b>Kada abejoti:</b> kai tikrumas &lt; 50 %, kai kandidatai skiriasi &lt; 15 p. p., kai nufotografuota tik dalis augalo arba jis nežydi.</p>
+<p class="small"><b>Kodėl kartais sakome „Nesu tikras“:</b> užtikrintai pasakyta neteisinga rūšis kainuoja brangiausiai, nes ja aklai pasitikima. Todėl abejodami prašome dar vienos nuotraukos.</p></div>`};
+ACT.f1why=()=>`<button class="btn pri" data-a="back">Grįžti į rezultatą</button>`;
 
-/* ---------- F1: žemo tikrumo patvirtinimas ---------- */
 T.f1low='Patvirtinti su įspėjimu';
-V.f1low=()=>{const f=S.f1,[k,p]=f.out.c[f.sel];return `
-<div class="note warn"><b>Tikrumas žemas (${p} %)</b><p>Gali išsaugoti <b>${SP[k].lt}</b>, bet rūšis gali būti neteisinga. Ligų patikra ir priežiūros planas rems šia rūšimi.</p></div>
-<label class="sw card"><input type="checkbox" data-a="f1lowOk" ${f.lowOk?'checked':''}><span>Suprantu, kad rūšis gali būti neteisinga, ir ją patikrinau pats (-i)</span></label>
-<button class="btn pri" data-a="f1doSave" ${f.lowOk?'':'disabled'}>Išsaugoti su žyma „nepatikrinta“</button>
-<button class="btn" data-a="f1add">➕ Geriau pridėti nuotrauką</button>
-<button class="btn ghost" data-a="back">‹ Atgal</button>`};
+V.f1low=()=>{const f=S.f1,o=f.out,[k,p]=o.c[f.sel];return `
+${note('warn','warn',`Tikrumas žemas (${p} %)`,`Gali išsaugoti <b>${SP[k].lt}</b>, bet rūšis gali būti neteisinga. Ligų patikra rems šia rūšimi.`)}
+${dangerNote(o.c.map(x=>x[0]))}
+<label class="sw card"><input type="checkbox" data-a="f1lowOk" ${f.lowOk?'checked':''}><span>Suprantu, kad rūšis gali būti neteisinga, ir patikrinau ją pats (-i)</span></label>`};
+ACT.f1low=()=>`<button class="btn pri" data-a="f1doSave" ${S.f1.lowOk?'':'disabled'}>Išsaugoti su žyma „nepatikrinta“</button><button class="btn" data-a="f1add">${I('plus')} Geriau pridėti nuotrauką</button>`;
 
-/* ---------- F1: katalogas (A4, be DI) ---------- */
 T.f1cat='Katalogas';
-V.f1cat=()=>{const f=S.f1;const q=f.q.trim().toLowerCase();const list=CATALOG.filter(k=>!q||SP[k].lt.toLowerCase().includes(q)||SP[k].la.toLowerCase().includes(q));
+V.f1cat=()=>{const f=S.f1;const q=f.q.trim().toLowerCase();const list=q.length<2?CATALOG:CATALOG.filter(k=>SP[k].lt.toLowerCase().includes(q)||SP[k].la.toLowerCase().includes(q));
 return `
-<h2>Katalogas</h2>
 <p class="small mute">Paieška be DI: rask augalą pagal pavadinimą ir palygink pats (-i).</p>
 <label class="f">Augalo pavadinimas <span class="h">Lietuviškai arba lotyniškai, bent 2 raidės</span>
-<input type="search" data-a="f1q" value="${esc(f.q)}" placeholder="pvz., monstera" autocomplete="off"></label>
-${q&&q.length<2?`<p class="small mute">Įvesk bent 2 raides.</p>`:''}
-${q&&!list.length?`<div class="note warn"><b>Nieko nerasta pagal „${esc(f.q)}“</b><p class="small">Patikrink rašybą arba pabandyk lotynišką pavadinimą.</p></div>`:''}
-<div class="stack" role="radiogroup" aria-label="Katalogo rezultatai">${list.map(k=>`<label class="cand ${f.catSel===k?'sel':''}" style="cursor:pointer"><span class="row"><input type="radio" name="cat" data-a="f1catSel" data-v="${k}" ${f.catSel===k?'checked':''}><span><b>${SP[k].lt}</b><br><span class="la">${SP[k].la}</span></span></span></label>`).join('')}</div>
-${f.catErr?`<p class="err-t" role="alert">⚠ ${f.catErr}</p>`:''}
-<button class="btn pri" data-a="f1catSave">Išsaugoti pasirinktą</button>
-<button class="btn ghost" data-a="back">‹ Grįžti į DI rezultatą</button>`};
+<input type="search" data-a="f1q" value="${esc(f.q)}" placeholder="pvz., monstera" autocomplete="off" ${q.length>=2&&!list.length?'aria-invalid="true"':''}></label>
+${q.length===1?`<p class="xs mute">Įvesk dar bent vieną raidę.</p>`:''}
+${q.length>=2&&!list.length?note('warn','search',`Nieko nerasta pagal „${esc(f.q)}“`,'Patikrink rašybą arba pabandyk lotynišką pavadinimą.'):''}
+<div class="stack" role="radiogroup" aria-label="Katalogo rezultatai">${list.map(k=>`<label class="crow ${f.catSel===k?'sel':''}"><input type="radio" name="cat" data-a="f1catSel" data-v="${k}" ${f.catSel===k?'checked':''}>${ph(SP[k].img)}<span><span class="n">${SP[k].lt}</span><br><span class="la small">${SP[k].la}</span></span><span></span></label>`).join('')}</div>
+${f.catErr?`<p class="err-t" role="alert">${I('warn',18)} ${f.catErr}</p>`:''}`};
+ACT.f1cat=()=>`<button class="btn pri" data-a="f1catSave">Išsaugoti pasirinktą</button>`;
 
-/* ---------- F1: išsaugota ---------- */
 T.f1saved='Išsaugota';
-V.f1saved=()=>{const pl=plantById(S.plantId);if(!pl)return `<div class="note info"><b>Išsaugojimas atšauktas</b><p>Rūšis neišsaugota.</p></div><button class="btn pri" data-a="go" data-v="f1res">‹ Grįžti į rezultatą</button><button class="btn" data-a="home">Į pradžią</button>`;
+V.f1saved=()=>{const pl=plantById(S.plantId);if(!pl)return note('info','info','Išsaugojimas atšauktas','Rūšis neišsaugota.');
 const sp=SP[pl.sp];return `
-<div class="note ok"><b>✔ Išsaugota „Mano augaluose“</b><p>${sp.lt} <span class="la">${sp.la}</span></p><p class="small">${pl.src}${pl.unverified?' · žyma „nepatikrinta“':''}${pl.expert?' · eksperto žyma':''}</p></div>
+<div class="card hero" style="text-align:center;justify-items:center">
+  <span style="width:56px;height:56px;border-radius:50%;background:var(--strong);color:var(--onstrong);display:grid;place-items:center">${I('check',30)}</span>
+  <h2>Išsaugota</h2>
+  <p><b>${sp.lt}</b><br><span class="la">${sp.la}</span></p>
+  <div class="chips" style="justify-content:center"><span class="chip">${pl.srcShort}</span>${pl.unverified?'<span class="chip mid">nepatikrinta</span>':''}${pl.expert?'<span class="chip hi">eksperto žyma</span>':''}</div>
+</div>
 ${dangerNote([pl.sp])}
-<div class="card"><h3>Ką daryti toliau?</h3>
-${pl.spots?`<div class="note info"><b>Matome dėmių. Patikrinti ligą?</b></div>`:''}
-<button class="btn ${pl.spots?'pri':''}" data-a="f2forPlant" data-v="${pl.id}">🩺 Patikrinti, ar serga (F2)</button>
-<button class="btn" disabled>Sudaryti priežiūros planą (F3, šiame prototipe nerealizuota)</button>
-<button class="btn ghost" data-a="go" data-v="plants">Mano augalai</button>
-</div>`};
+${pl.spots?note('info','pulse','Matome dėmių. Patikrinti ligą?','Rūšis jau patvirtinta, todėl ligų patikra prasidės iškart.'):''}`};
+ACT.f1saved=()=>{const pl=plantById(S.plantId);if(!pl)return `<button class="btn pri" data-a="back">Grįžti į rezultatą</button>`;
+return `<button class="btn ${pl.spots?'pri':''}" data-a="f2forPlant" data-v="${pl.id}">${I('pulse')} Patikrinti, ar serga</button><button class="btn" disabled>Priežiūros planas (F3, kito nario funkcija)</button>`};
 
 /* ---------- Mano augalai ---------- */
 T.plants='Mano augalai';
-V.plants=()=>`
-<h2>Mano augalai</h2>
-${S.plants.length?S.plants.map(p=>`<button class="plant" data-a="openPlant" data-v="${p.id}">${ph(p.img,'',``,p.url)}<span><b>${SP[p.sp].lt}</b><br><span class="la">${SP[p.sp].la}</span><br><span class="small mute">${p.date}${p.treat?' · gydoma: '+DIS[p.treat.d].lt:''}</span></span><span aria-hidden="true">›</span></button>`).join('')
-:`<div class="note info"><b>Kol kas tuščia</b><p class="small">Atpažink augalą ir patvirtink rūšį, tada jis atsiras čia.</p></div><button class="btn pri" data-a="startF1">📷 Atpažinti augalą</button>`}`;
+V.plants=()=>S.plants.length?S.plants.map(plantRow).join('')
+:`<div class="card soft" style="text-align:center"><p class="small mute">Dar neturi išsaugotų augalų.<br>Atpažintas augalas atsiras čia.</p></div>`;
+ACT.plants=()=>S.plants.length?'':`<button class="btn pri" data-a="startF1">${I('cam')} Atpažinti augalą</button>`;
 
 T.plant='Augalas';
-V.plant=()=>{const p=plantById(S.plantId);if(!p)return V.plants();const sp=SP[p.sp];return `
-<div class="row" style="align-items:flex-start"><div style="width:96px;flex:none">${ph(p.img,'',``,p.url)}</div><div><h2>${sp.lt}</h2><p class="la">${sp.la}</p><p class="small mute">${p.src}${p.unverified?' · nepatikrinta':''}${p.expert?' · eksperto žyma':''}</p></div></div>
+V.plant=()=>{const p=plantById(S.plantId);if(!p)return '';const sp=SP[p.sp];return `
+<div class="row" style="align-items:center">${ph(p.img,'','',p.url).replace('class="ph"','class="ph" style="width:88px;flex:none"')}<div><h2>${sp.lt}</h2><p class="la">${sp.la}</p><div class="chips" style="margin-top:6px"><span class="chip">${p.srcShort}</span>${p.unverified?'<span class="chip mid">nepatikrinta</span>':''}${p.expert?'<span class="chip hi">eksperto žyma</span>':''}</div></div></div>
 ${dangerNote([p.sp])}
-${p.treat?`<div class="card"><h3>Gydymas: ${DIS[p.treat.d].lt}</h3><p class="small">Pasirinkti veiksmai: ${p.treat.acts.length?p.treat.acts.map(esc).join('; '):'nepasirinkta'}</p>
-<p class="small">${p.treat.remind?'🔔 Priminimas patikrinti po 7 d. įjungtas':'Priminimas neįjungtas'}${p.treat.result?' · '+p.treat.result:''}</p>
-<div class="demo"><span class="tag">Prototipas: laiko imitacija</span><button class="btn" data-a="f2recheck">⏩ Imituoti: praėjo 7 dienos</button></div></div>`:''}
+${p.treat?`<div class="card"><span class="lbl">Ligų patikra</span><h3>${DIS[p.treat.d].lt}</h3>
+<p class="small">Pasirinkta: ${p.treat.acts.length?p.treat.acts.map(esc).join('; '):'—'}</p>
+<p class="small row">${I('bell',16)} ${p.treat.remind?'Priminimas po 7 d. įjungtas':'Priminimas neįjungtas'}${p.treat.result?' · '+p.treat.result:''}</p>
+<div class="demo"><span class="chip demo">Prototipas · laikas</span><button class="btn" data-a="f2recheck">${I('clock')} Imituoti: praėjo 7 dienos</button></div></div>`:''}
 <div class="card"><h3>Ar rūšis teisinga?</h3>
-<div class="row"><button class="btn" data-a="fbYes">👍 Taip</button><button class="btn" data-a="chgStart">✏️ Ne, pakeisti rūšį</button></div></div>
-<button class="btn" data-a="f2forPlant" data-v="${p.id}">🩺 Patikrinti, ar serga</button>
-<button class="btn danger" data-a="delAsk">🗑 Ištrinti iš istorijos</button>
-${S.delAsk?`<div class="note err" role="alertdialog"><b>Ištrinti ${sp.lt}?</b><p class="small">Bus ištrinta nuotrauka ir istorija.</p><div class="row"><button class="btn danger" data-a="delDo">Ištrinti</button><button class="btn" data-a="delNo">Ne</button></div></div>`:''}`};
+<div class="row"><button class="btn" data-a="fbYes">${I('check')} Taip</button><button class="btn" data-a="chgStart">${I('edit')} Pakeisti rūšį</button></div></div>
+${S.delAsk?note('err','trash',`Ištrinti ${sp.lt}?`,'Bus ištrinta nuotrauka ir istorija.',`<div class="row" style="margin-top:8px"><button class="btn danger" data-a="delDo">Ištrinti</button><button class="btn" data-a="delNo">Ne</button></div>`):''}`};
+ACT.plant=()=>`<button class="btn pri" data-a="f2forPlant" data-v="${S.plantId}">${I('pulse')} Patikrinti, ar serga</button><button class="btn danger" data-a="delAsk">${I('trash')} Ištrinti iš istorijos</button>`;
 
-/* ---------- K4: pakeisti rūšį ---------- */
 T.chg='Pakeisti rūšį';
 V.chg=()=>{const p=plantById(S.plantId);const opts=[...new Set([...(p.cands||[]),'mon','ada','pothos','rose','canina'])].filter(k=>k!==p.sp).slice(0,5);
 return `
-<h2>Pakeisti rūšį</h2>
-<p class="small">Dabar: <b>${SP[p.sp].lt}</b>. Pasirink teisingą rūšį (pvz., pražydus paaiškėjo, kad tai kita rūšis).</p>
-<div class="stack">${opts.map(k=>`<label class="cand ${S.chg===k?'sel':''}" style="cursor:pointer"><span class="row"><input type="radio" name="chg" data-a="chgSel" data-v="${k}" ${S.chg===k?'checked':''}><span><b>${SP[k].lt}</b><br><span class="la">${SP[k].la}</span>${(p.cands||[]).includes(k)?' <span class="chip ai">DI kandidatas</span>':''}</span></span></label>`).join('')}</div>
-<button class="btn pri" data-a="chgNext" ${S.chg?'':'disabled'}>Toliau</button>
-<button class="btn" data-a="startF1">📷 Fotografuoti iš naujo</button>
-<button class="btn ghost" data-a="back">‹ Atgal</button>`};
+<p class="small">Dabar: <b>${SP[p.sp].lt}</b>. Pasirink teisingą rūšį, pvz., kai pražydus paaiškėjo, kad tai kita rūšis.</p>
+<div class="stack" role="radiogroup" aria-label="Rūšys">${opts.map(k=>`<label class="crow ${S.chg===k?'sel':''}"><input type="radio" name="chg" data-a="chgSel" data-v="${k}" ${S.chg===k?'checked':''}>${ph(SP[k].img)}<span><span class="n">${SP[k].lt}</span><br><span class="la small">${SP[k].la}</span></span>${(p.cands||[]).includes(k)?'<span class="chip ai">DI</span>':'<span></span>'}</label>`).join('')}</div>
+<button class="link" data-a="chgCat">Ieškoti kataloge</button>`};
+ACT.chg=()=>`<button class="btn pri" data-a="chgNext" ${S.chg?'':'disabled'}>Toliau</button><button class="btn" data-a="startF1">${I('cam')} Fotografuoti iš naujo</button>`;
 T.chgok='Patvirtink pakeitimą';
 V.chgok=()=>{const p=plantById(S.plantId);return `
-<h2>Patvirtink pakeitimą</h2>
-<div class="card"><p><s>${SP[p.sp].lt}</s> → <b>${SP[S.chg].lt}</b></p>
-<p class="small">Pakeitus rūšį bus perskaičiuota:</p><ul class="steps small"><li>F3 priežiūros planas (laistymas, šviesa)</li><li>F4 priežiūros klaidų rizika</li><li>Pavojingumo įspėjimas</li></ul></div>
+<div class="card"><p class="row" style="flex-wrap:wrap"><s class="mute">${SP[p.sp].lt}</s> ${I('chev',16)} <b>${SP[S.chg].lt}</b></p>
+<p class="small">Bus perskaičiuota ir parodyta patvirtinti:</p><ul class="clean small"><li>F3 priežiūros planas (laistymas, šviesa)</li><li>F4 priežiūros klaidų rizika</li><li>Pavojingumo įspėjimas</li></ul></div>
 ${dangerNote([S.chg])}
-${S.train?`<p class="small mute">Pataisymas bus išsiųstas kaip grįžtamasis ryšys modeliui${S.expert?' su eksperto žyma':''}.</p>`:`<p class="small mute">Pataisymas modeliui nesiunčiamas (mokymas išjungtas).</p>`}
-<button class="btn pri" data-a="chgDo">Patvirtinti naują rūšį</button>
-<button class="btn ghost" data-a="back">‹ Atgal</button>`};
+<p class="xs mute">${S.train?`Pataisymas bus išsiųstas modeliui kaip grįžtamasis ryšys${S.expert?' su eksperto žyma':''}.`:'Pataisymas modeliui nesiunčiamas (mokymas išjungtas).'}</p>`};
+ACT.chgok=()=>`<button class="btn pri" data-a="chgDo">Patvirtinti naują rūšį</button>`;
 
 /* ---------- F2: kuriam augalui ---------- */
 T.f2pick='Ligų patikra';
-V.f2pick=()=>`
-<h2>Kuriam augalui tikrinti ligą?</h2>
-${S.plants.length?`<div class="stack">${S.plants.map(p=>`<button class="plant" data-a="f2forPlant" data-v="${p.id}">${ph(p.img,'',``,p.url)}<span><b>${SP[p.sp].lt}</b><br><span class="la">${SP[p.sp].la}</span></span><span>›</span></button>`).join('')}</div>`
-:`<div class="note warn"><b>Rūšis dar nepatvirtinta</b><p class="small">Ligos priklauso nuo augalo rūšies, todėl pirmiausia atpažink augalą ir patvirtink rūšį.</p></div>`}
-<button class="btn ${S.plants.length?'':'pri'}" data-a="f1fromF2">📷 Augalo nėra sąraše: atpažinti (F1)</button>
-${S.plants.length?'':`<div class="demo"><span class="tag">Prototipas: greitas startas</span><button class="btn" data-a="seedRose">Naudoti pavyzdį: Algio rožė (patvirtinta)</button></div>`}`;
+V.f2pick=()=>S.plants.length?`<p class="mute">Kuriam augalui tikrinti ligą?</p>${S.plants.map(p=>`<button class="prow" data-a="f2forPlant" data-v="${p.id}">${ph(p.img,'','',p.url)}<span><b>${SP[p.sp].lt}</b><br><span class="la small">${SP[p.sp].la}</span></span>${I('chev',18)}</button>`).join('')}`
+:`${note('warn','info','Rūšis dar nepatvirtinta','Ligos priklauso nuo augalo rūšies, todėl pirmiausia atpažink augalą ir patvirtink rūšį.')}
+<div class="demo"><span class="chip demo">Prototipas · greitas startas</span><button class="btn" data-a="seedRose">Naudoti pavyzdį: Algio rožė</button></div>`;
+ACT.f2pick=()=>`<button class="btn ${S.plants.length?'':'pri'}" data-a="f1fromF2">${I('cam')} ${S.plants.length?'Augalo nėra sąraše: atpažinti':'Atpažinti augalą (F1)'}</button>`;
 
 /* ---------- F2: nuotraukos ir klausimai ---------- */
 T.f2cap='Ligų patikra';
-V.f2cap=()=>{const f=S.f2,p=plantById(f.plantId);const sel=id=>f.photos.some(x=>x.sample===id);const hasDmg=f.photos.some(x=>x.part==='Pažeista dalis');const hasWhole=f.photos.some(x=>x.part==='Visas augalas');
-const q=f.q,qe=f.qErr;
+V.f2cap=()=>{const f=S.f2,p=plantById(f.plantId);const sel=id=>f.photos.some(x=>x.sample===id);const hasWhole=f.photos.some(x=>x.part==='Visas augalas');const q=f.q,qe=f.qErr;
 return `
-<div class="row"><div style="width:52px;flex:none">${ph(p.img,'',``,p.url)}</div><p class="small">Augalas: <b>${SP[p.sp].lt}</b><br><span class="mute">Rūšis patvirtinta F1</span></p></div>
-<h2>Nufotografuok pažeistą lapą</h2>
-<p class="small mute">Būtina: pažeistos vietos nuotrauka iš arti. Rekomenduojama: viso augalo nuotrauka.</p>
-<div class="demo"><span class="tag">Prototipas: kameros imitacija</span>
-<div class="grid2">${F2S.map(s=>`<button class="sample" data-a="f2pick" data-v="${s.id}" aria-pressed="${sel(s.id)}">${ph(s.img)}<b>${s.t}</b><span>${s.h}</span></button>`).join('')}</div>
-<label class="sw"><input type="checkbox" data-a="tog" data-v="slow" ${S.slow?'checked':''}><span class="small"><b>Imituoti silpną ryšį</b> (K6)</span></label></div>
-<label class="btn" style="cursor:pointer">🖼 Įkelti iš galerijos<input type="file" accept="image/*" data-a="f2file" class="sr"></label>
-${f.err?`<p class="err-t" role="alert">⚠ ${esc(f.err)}</p>`:''}
-${f.photos.length?`<div class="grid3">${f.photos.map((x,i)=>`<div class="stack">${ph(x.img,x.part,``,x.url)}<button class="btn ghost small" style="min-height:36px" data-a="f2rm" data-i="${i}">✕ Pašalinti</button></div>`).join('')}</div>`:''}
-${f.photos.length&&!hasWhole?`<p class="small mute">💡 Pridėk viso augalo nuotrauką: su viena nuotrauka tikrumas mažesnis.</p>`:''}
-<div class="card"><h3>3 trumpi klausimai</h3>
-<label class="f">Kada pastebėjai pakitimus? *<select data-a="f2q" data-v="when" ${qe&&!q.when?'aria-invalid="true"':''}><option value="">Pasirink…</option>${['Šiandien','Šią savaitę','Prieš daugiau nei savaitę','Nežinau'].map(o=>`<option ${q.when===o?'selected':''}>${o}</option>`).join('')}</select></label>
-${qe&&!q.when?`<p class="err-t">Pasirink, kada pastebėjai.</p>`:''}
-${['spread','bugs'].map(k=>`<fieldset><legend>${k==='spread'?'Ar dėmės plinta į kitus lapus? *':'Ar matyti vabzdžių? *'}</legend><div class="opts">${['Taip','Ne','Nežinau'].map(o=>`<label><input type="radio" name="${k}" data-a="f2q" data-v="${k}" value="${o}" ${q[k]===o?'checked':''}>${o}</label>`).join('')}</div>${qe&&!q[k]?`<p class="err-t">Pasirink atsakymą.</p>`:''}</fieldset>`).join('')}
-${q.bugs==='Taip'?`<p class="small mute">💡 Jei matai vabzdžių, nufotografuok juos iš arti: tai padės atskirti kenkėjus nuo ligos.</p>`:''}
+<div class="prow" style="cursor:default">${ph(p.img,'','',p.url)}<span><b>${SP[p.sp].lt}</b><br><span class="xs mute">Rūšis patvirtinta F1</span></span><span></span></div>
+<div><h3>1. Nufotografuok pažeistą lapą</h3><p class="small mute">Būtina pažeistos vietos nuotrauka iš arti. Viso augalo nuotrauka nebūtina, bet padidina tikrumą.</p></div>
+<div class="demo">
+  <span class="chip demo" style="justify-self:start">Prototipas · kamera</span>
+  <div class="grid2">${F2S.map(s=>`<button class="sample" data-a="f2pick" data-v="${s.id}" aria-pressed="${sel(s.id)}">${ph(s.img)}<b>${s.t}</b><span class="h">${s.k}</span></button>`).join('')}</div>
+  <label class="sw small"><input type="checkbox" data-a="tog" data-v="slow" ${S.slow?'checked':''}><span>Imituoti silpną ryšį (K6)</span></label>
 </div>
-${!hasDmg&&f.photos.length?`<p class="err-t">Reikia bent vienos pažeistos vietos nuotraukos.</p>`:''}
-<button class="btn pri" data-a="f2analyze" ${hasDmg?'':'disabled'}>Tikrinti ligą</button>`};
+<label class="btn" style="cursor:pointer">${I('img')} Įkelti iš galerijos<input type="file" accept="image/*" data-a="f2file" class="sr"></label>
+${f.err?`<p class="err-t" role="alert">${I('warn',18)} ${esc(f.err)}</p>`:''}
+${f.photos.length?`<div class="thumbs">${f.photos.map((x,i)=>`<div><div style="position:relative">${ph(x.img,x.part==='Visas augalas'?'visas augalas':'pažeista vieta','',x.url)}<button class="x" data-a="f2rm" data-i="${i}" aria-label="Pašalinti nuotrauką">${I('x',16)}</button></div></div>`).join('')}</div>`:''}
+${f.noDmg?`<p class="err-t" role="alert">${I('warn',18)} Reikia pažeistos vietos nuotraukos.</p>`:''}
+${f.photos.length&&!hasWhole?`<p class="xs mute">Patarimas: pridėk viso augalo nuotrauką. Su viena nuotrauka tikrumas mažesnis.</p>`:''}
+<div><h3>2. Trys trumpi klausimai</h3><p class="small mute">Atsakymai padeda atskirti ligą nuo kenkėjų ir priežiūros klaidų.</p></div>
+<div class="card">
+<label class="f">Kada pastebėjai pakitimus? <select data-a="f2q" data-v="when" ${qe&&!q.when?'aria-invalid="true"':''}><option value="">Pasirink…</option>${['Šiandien','Šią savaitę','Prieš daugiau nei savaitę','Nežinau'].map(o=>`<option ${q.when===o?'selected':''}>${o}</option>`).join('')}</select></label>
+${qe&&!q.when?`<p class="err-t">${I('warn',16)} Pasirink, kada pastebėjai.</p>`:''}
+${[['spread','Ar dėmės plinta į kitus lapus?'],['bugs','Ar matyti vabzdžių?']].map(([k,t])=>`<fieldset><legend>${t}</legend><div class="seg">${['Taip','Ne','Nežinau'].map(o=>`<label><input type="radio" name="${k}" data-a="f2q" data-v="${k}" value="${o}" ${q[k]===o?'checked':''}>${o}</label>`).join('')}</div>${qe&&!q[k]?`<p class="err-t">${I('warn',16)} Pasirink atsakymą.</p>`:''}</fieldset>`).join('')}
+${q.bugs==='Taip'?`<p class="xs mute">Patarimas: nufotografuok vabzdžius iš arti, tai padės atskirti kenkėjus nuo ligos.</p>`:''}
+</div>`};
+ACT.f2cap=()=>`<button class="btn pri big" data-a="f2analyze">Tikrinti ligą</button>`;
 
 /* ---------- F2: rezultatas ---------- */
 const curDis=()=>S.f2.out.c[S.f2.di];
-T.f2res='Ligų patikros rezultatas';
-V.f2res=()=>{const f=S.f2,o=f.out,dmg=f.photos.find(x=>x.part==='Pažeista dalis');
+const dmgPhoto=()=>S.f2.photos.find(x=>x.part==='Pažeista dalis');
+T.f2res='Patikros rezultatas';
+V.f2res=()=>{const f=S.f2,o=f.out,dmg=dmgPhoto();
 if(o.status==='Ligos požymių nerasta')return `
-<div class="row"><span class="chip ai">Sugeneruota DI</span></div>
-<div class="note ok"><b>Ligos požymių nerasta</b><p>Tikrumas ${o.p} % (${BAND(o.p)[0].toLowerCase()}).</p><p class="small">Tai nereiškia, kad augalas tikrai sveikas: DI įvertino tik šią nuotrauką. Jei pakitimai plinta, pakartok patikrą po kelių dienų.</p></div>
-<div style="max-width:220px">${ph(dmg.img,'Tavo nuotrauka',``,dmg.url)}</div>
-<p class="small mute">Mažiausiai tikėtinos: ${o.c.map(([d,p])=>`${DIS[d].lt} ${p} %`).join(', ')}.</p>
-<button class="btn" data-a="f2remindNone">🔔 Priminti patikrinti po 7 d.</button>
-<button class="btn" disabled>Gal tai priežiūros klaida? (F4, šiame prototipe nerealizuota)</button>
-<button class="btn" data-a="f2again">📷 Nauja nuotrauka</button>
-<button class="btn pri" data-a="f2finishNone">Baigti patikrą</button>`;
+<section class="card">
+  <div class="chips"><span class="chip ai">DI</span><span class="chip hi">${o.p} % · ${BAND(o.p)[0]}</span></div>
+  <h3 style="font-size:1.3em">Ligos požymių nerasta</h3>
+  ${ph(dmg.img,'tavo nuotrauka','',dmg.url).replace('class="ph"','class="ph" style="max-width:200px"')}
+  <p class="small">Tai nereiškia, kad augalas tikrai sveikas: DI įvertino tik šią nuotrauką. Jei pakitimai plinta, pakartok patikrą po kelių dienų.</p>
+  <p class="xs mute">Mažiausiai tikėtinos: ${o.c.map(([d,p])=>`${DIS[d].lt} ${p} %`).join(', ')}</p>
+</section>
+<button class="btn" data-a="f2remindNone">${I('bell')} Priminti patikrinti po 7 d.</button>
+<button class="btn" disabled>Gal tai priežiūros klaida? (F4, kito nario funkcija)</button>`;
 const low=o.status==='Neaišku';const [d,p]=curDis();const D=DIS[d];const b=BAND(p);
-return `
-<div class="row"><span class="chip ai">Sugeneruota DI</span><span class="small mute">${f.photos.length} nuotr.</span></div>
-${low?`<div class="note warn"><b>Neaišku: tikrumas žemas (${o.c[0][1]} %)</b><p class="small">Požymiai gali reikšti ne ligą, o maisto medžiagų trūkumą ar saulės nudegimą. Cheminių priemonių nerodome. Nufotografuok ryškiau ir iš arčiau arba pasitark su specialistu.</p></div>`
-:`<div class="note ${p>=50?'warn':'info'}"><b>${f.di?'Tavo pasirinkta diagnozė':o.status}: ${D.lt}</b><p class="small">DI tikrumas ${p} % (${b[0].toLowerCase()}). ${f.photos.length===1?'Analizuota tik viena nuotrauka.':''} ${p<50?'Kadangi DI tikrumas žemas, cheminių priemonių nesiūlysime, net jei patvirtinsi.':''}</p></div>`}
-<div style="max-width:280px">${ph(dmg.img,f.showSpots?'Raudonai pažymėtos pažeistos vietos':'Tavo nuotrauka',f.showSpots?spotsOverlay(o.spots):'',dmg.url)}</div>
+const pic=`<div class="ph">${dmg.url?`<img src="${dmg.url}" alt="">`:art(dmg.img)}${f.showSpots?spotsOverlay(o.spots):''}<span class="cap">${f.showSpots?'pažymėtos pažeistos vietos':'tavo nuotrauka'}</span></div>`;
+if(low)return `
+${note('warn','info',`Neaišku: tikrumas žemas (${o.c[0][1]} %)`,'Požymiai gali reikšti ne ligą, o maisto medžiagų trūkumą ar saulės nudegimą. Cheminių priemonių nerodome.')}
+<div class="grid2">${pic}<div class="stack">${o.c.map(([k,pp])=>`<div><p class="small"><b>${DIS[k].lt}</b>${DIS[k].kind!=='liga'?' <span class="chip">ne liga</span>':''}</p><div class="row"><div class="meter lo" style="flex:1"><i style="width:${pp}%"></i></div><span class="xs" style="font-family:var(--mono)">${pp} %</span></div></div>`).join('')}</div></div>
 <label class="sw small"><input type="checkbox" data-a="f2spots" ${f.showSpots?'checked':''}> Rodyti pažymėtas vietas</label>
-<div class="stack">${o.c.map(([k,pp],i)=>{const bb=BAND(pp);return `<div class="cand ${i===f.di&&!low?'sel':''}"><div class="row"><span style="flex:1"><b>${i+1}. ${DIS[k].lt}</b> <span class="la">${DIS[k].la}</span>${DIS[k].kind!=='liga'?' <span class="chip nodi">ne liga</span>':''}</span><span class="pct">${pp} %</span></div><div class="meter ${bb[1]}"><i style="width:${pp}%"></i></div></div>`}).join('')}</div>
-${!low?`<div class="card"><h3>Palygink su pavyzdžiais</h3><div class="grid3">${ph(dmg.img,'Tavo',``,dmg.url)}${ph(D.img,D.lt)}${ph(D.img,'Pavyzdys 2')}</div><p class="small"><b>Požymiai:</b> ${D.feat}</p></div>
-<button class="btn" data-a="go" data-v="f2why">❔ Kodėl?</button>
-<button class="btn pri" data-a="f2confirm">✔ Panašu: patvirtinti diagnozę</button>
-<button class="btn" data-a="go" data-v="f2rej">✕ Ne ta liga</button>`
-:`<div class="card"><h3>Ką galima daryti jau dabar (nekenksminga)</h3><ul class="steps small">${DIS.bs.safe.slice(0,2).concat(DIS.kdef.safe).map(s=>`<li>${s}</li>`).join('')}</ul></div>
-<button class="btn pri" data-a="f2again">📷 Nauja nuotrauka iš arčiau</button>
-<button class="btn" data-a="go" data-v="f2spec">👩‍🌾 Siųsti specialistui</button>
-<button class="btn" data-a="go" data-v="f2why">❔ Kodėl neaišku?</button>`}
-<details><summary>Kodėl ligą rodome jau nuo vidutinio tikrumo?</summary><p class="small" style="margin-top:6px">Praleista liga (FN) kainuoja brangiausiai: ji plinta ir sunaikina derlių. Todėl renkamės recall: geriau perspėti, o žalą dėl galimos klaidos mažina tai, kad pirmiausia siūlome nekenksmingus veiksmus, o chemiją – tik patvirtinus diagnozę.</p></details>`};
+<div class="card soft"><h3>Ką saugu daryti jau dabar</h3><ul class="clean small">${[DIS.bs.safe[0],DIS.bs.safe[1],DIS.kdef.safe[0]].map(s=>`<li>${s}</li>`).join('')}</ul></div>
+<div class="row"><button class="btn" data-a="go" data-v="f2why">${I('info')} Kodėl neaišku?</button><button class="btn" data-a="go" data-v="f2spec">${I('user')} Specialistui</button></div>`;
+return `
+<section class="card">
+  <div class="chips"><span class="chip ai">DI</span><span class="chip ${b[1]}">${b[0]} tikrumas</span>${f.di?'<span class="chip">Tavo pasirinkimas</span>':''}</div>
+  <div class="row" style="align-items:flex-end;justify-content:space-between"><div><span class="lbl">${f.di?'Tavo pasirinkta diagnozė':o.status}</span><h3 style="font-size:1.3em">${D.lt}</h3><p class="la">${D.la}</p></div><span class="big-pct">${p}&nbsp;%</span></div>
+  <div class="meter ${b[1]}"><i style="width:${p}%"></i></div>
+  ${p<50?`<p class="small">${I('info',16)} DI tikrumas šiai diagnozei žemas, todėl cheminių priemonių nesiūlysime.</p>`:''}
+  <div class="grid3">${pic}${ph(D.img,'pavyzdys')}${ph(D.img,'iš bazės')}</div>
+  <label class="sw small"><input type="checkbox" data-a="f2spots" ${f.showSpots?'checked':''}> Rodyti pažymėtas vietas</label>
+  <p class="small"><b>Požymiai:</b> ${D.feat}</p>
+  ${f.photos.length===1?`<p class="xs mute">Analizuota tik viena nuotrauka. Su viso augalo nuotrauka tikrumas būtų didesnis.</p>`:''}
+</section>
+<div class="row"><button class="btn" data-a="go" data-v="f2why">${I('info')} Kodėl?</button><button class="btn" data-a="go" data-v="f2rej">${I('x')} Ne ta liga</button></div>
+<span class="lbl">Kiti kandidatai</span>
+${o.c.map(([k,pp],i)=>i===f.di?'':`<div class="row small" style="justify-content:space-between;padding:0 4px"><span>${DIS[k].lt}</span><span style="font-family:var(--mono)">${pp} %</span></div>`).join('')}
+<details class="more"><summary>Kodėl ligą rodome jau nuo vidutinio tikrumo?</summary><div><p class="small">Praleista liga (FN) kainuoja brangiausiai: ji plinta ir sunaikina derlių. Todėl geriau perspėti. Žalą dėl galimos klaidos mažina tai, kad pirmiausia siūlome nekenksmingus veiksmus, o chemiją tik patvirtinus diagnozę.</p></div></details>`};
+ACT.f2res=()=>{const o=S.f2.out;
+if(o.status==='Ligos požymių nerasta')return `<button class="btn pri" data-a="home">Baigti patikrą</button><button class="btn" data-a="f2again">${I('cam')} Nauja nuotrauka</button>`;
+if(o.status==='Neaišku')return `<button class="btn pri big" data-a="f2again">${I('cam')} Nauja nuotrauka iš arčiau</button>`;
+return `<button class="btn pri big" data-a="f2confirm">${I('check')} Panašu: patvirtinti diagnozę</button>`};
 
 T.f2why='Kodėl?';
-V.f2why=()=>{const f=S.f2,o=f.out,[d,p]=curDis(),D=DIS[d],dmg=f.photos.find(x=>x.part==='Pažeista dalis');return `
-<h2>Kodėl ${esc(D.lt.toLowerCase())}?</h2>
-<div style="max-width:260px">${ph(dmg.img,'Pažymėtos vietos, lėmusios rezultatą',spotsOverlay(o.spots),dmg.url)}</div>
-<div class="card small"><p><b>Požymiai žodžiais:</b> ${D.feat}</p>
-<p><b>Atsižvelgta į tavo atsakymus:</b> pastebėta „${esc(f.q.when.toLowerCase())}“, plinta: „${esc(f.q.spread.toLowerCase())}“, vabzdžių: „${esc(f.q.bugs.toLowerCase())}“.</p>
-<p><b>Tikrumas:</b> ${p} %. ${f.photos.length===1?'Tik viena nuotrauka – abejok labiau.':''}</p>
-${o.status==='Neaišku'?`<p><b>Kodėl neaišku:</b> dėmės neryškios, o rudi kraštai būdingi ir kalio trūkumui (${o.c[1][1]} %), ir saulės nudegimui (${o.c[2][1]} %).</p>`:''}
-<p class="mute"><b>Šaltinis:</b> ligų požymiai ir gydymo rekomendacijos – patikrinta augalų apsaugos bazė (prototipe pavyzdiniai duomenys), ne reklama.</p></div>
-<button class="btn pri" data-a="back">‹ Grįžti</button>`};
+V.f2why=()=>{const f=S.f2,o=f.out,[d,p]=curDis(),D=DIS[d],dmg=dmgPhoto();return `
+<div class="ph" style="max-width:280px">${dmg.url?`<img src="${dmg.url}" alt="">`:art(dmg.img)}${spotsOverlay(o.spots)}<span class="cap">pažymėtos vietos lėmė rezultatą</span></div>
+<div class="card">
+  <div class="chips"><span class="chip ai">DI</span><span class="chip ${BAND(p)[1]}">${p} % · ${BAND(p)[0]}</span></div>
+  <h3>${D.lt}</h3>
+  <p class="small"><b>Požymiai žodžiais:</b> ${D.feat}</p>
+  <p class="small"><b>Tavo atsakymai:</b> pastebėta „${esc(f.q.when.toLowerCase())}“, plinta – „${esc(f.q.spread.toLowerCase())}“, vabzdžių – „${esc(f.q.bugs.toLowerCase())}“.</p>
+  ${o.status==='Neaišku'?`<p class="small"><b>Kodėl neaišku:</b> dėmės neryškios, o rudi kraštai būdingi ir kalio trūkumui (${o.c[1][1]} %), ir saulės nudegimui (${o.c[2][1]} %).</p>`:''}
+  ${f.photos.length===1?`<p class="small"><b>Abejok labiau:</b> analizuota tik viena nuotrauka.</p>`:''}
+</div>
+<div class="card soft"><p class="small"><b>Šaltinis:</b> požymiai ir gydymo rekomendacijos iš patikrintos augalų apsaugos bazės (prototipe pavyzdiniai duomenys). Reklamos nėra.</p></div>`};
+ACT.f2why=()=>`<button class="btn pri" data-a="back">Grįžti</button>`;
 
 T.f2rej='Ne ta liga';
 V.f2rej=()=>{const f=S.f2;return `
 <h2>Kas, tavo nuomone, tai yra?</h2>
-<div class="stack">${f.out.c.map(([k,p],i)=>i===f.di?'':`<button class="btn" data-a="f2alt" data-i="${i}" style="justify-content:space-between"><span>${DIS[k].lt}</span><span>${p} %</span></button>`).join('')}</div>
-<button class="btn" data-a="f2healthy">🌿 Augalas sveikas (uždaryti patikrą)</button>
-<button class="btn" data-a="go" data-v="f2spec">👩‍🌾 Nežinau: siųsti specialistui</button>
-<button class="btn ghost" data-a="back">‹ Atgal</button>`};
+<div class="stack">${f.out.c.map(([k,p],i)=>i===f.di?'':`<button class="crow" style="grid-template-columns:1fr auto" data-a="f2alt" data-i="${i}"><span class="n">${DIS[k].lt}</span><span class="pc">${p} %</span></button>`).join('')}
+<button class="crow" style="grid-template-columns:auto 1fr" data-a="f2healthy">${I('leaf')}<span class="n">Augalas sveikas (uždaryti patikrą)</span></button>
+<button class="crow" style="grid-template-columns:auto 1fr" data-a="go" data-v="f2spec">${I('user')}<span class="n">Nežinau: siųsti specialistui</span></button></div>`};
 T.f2closed='Patikra uždaryta';
-V.f2closed=()=>`
-<div class="note ok"><b>Patikra uždaryta</b><p>Pažymėjai, kad augalas sveikas. Diagnozė neišsaugota, veiksmai nesiūlomi.</p>
-<p class="small">${S.train?'Tavo atsakymas bus panaudotas modeliui gerinti.':'Atsakymas modeliui nesiunčiamas (mokymas išjungtas).'}</p></div>
-<button class="btn pri" data-a="home">Į pradžią</button>`;
+V.f2closed=()=>note('ok','check','Patikra uždaryta','Pažymėjai, kad augalas sveikas. Diagnozė neišsaugota, veiksmai nesiūlomi.'+(S.train?' Atsakymas padės modeliui.':''));
+ACT.f2closed=()=>`<button class="btn pri" data-a="home">Į pradžią</button>`;
 
-/* ---------- F2: veiksmai ir sprendimas ---------- */
-T.f2plan='Ką daryti?';
-V.f2plan=()=>{const f=S.f2,[d,dp]=curDis(),D=DIS[d];const chemOk=dp>=50;const box=(t)=>`<label><input type="checkbox" data-a="f2act" value="${esc(t)}" ${f.acts.has(t)?'checked':''}><span>${t}</span></label>`;
+/* ---------- F2: veiksmai ---------- */
+T.f2plan='Ką darysi?';
+V.f2plan=()=>{const f=S.f2,[d,dp]=curDis(),D=DIS[d];const chemOk=dp>=50;const box=t=>`<label><input type="checkbox" data-a="f2act" value="${esc(t)}" ${f.acts.has(t)?'checked':''}><span class="small">${t}</span></label>`;
 return `
-<div class="note ok"><b>Diagnozė patvirtinta: ${D.lt}</b><p class="small">Pasirink, ką darysi. Niekas neperkama ir nepurškiama automatiškai.</p></div>
-<div class="card"><div class="tier"><h3>1. Nekenksmingi veiksmai (pradėk nuo jų)</h3>${D.safe.map(box).join('')}</div>
-${D.bio.length?`<div class="tier bio"><h3>2. Biologinės priemonės</h3>${D.bio.map(box).join('')}</div>`:''}
-${!chemOk&&D.chem.length?`<p class="small mute">Cheminės priemonės nerodomos: DI tikrumas šiai diagnozei ${dp} % (&lt; 50 %). Abejojant pasitark su specialistu.</p>`:''}
-${chemOk&&D.chem.length?`<details class="tier chem" style="border-left:4px solid var(--err)"><summary>3. Cheminės priemonės (tik jei kiti nepadeda)</summary>${D.chem.map(box).join('')}
-<p class="small mute">Naudok tik Lietuvoje registruotus produktus ir laikykis etiketės. Patikrink VMVT augalų apsaugos produktų registre.</p></details>`:''}
-<p class="small mute">Šaltinis: patikrinta augalų apsaugos bazė (pavyzdiniai duomenys). Reklamos nėra.</p></div>
-<label class="sw card"><input type="checkbox" data-a="f2remind" ${f.remind?'checked':''}><span><b>Priminti po 7 dienų patikrinti, ar gerėja</b><br><span class="small mute">Tada palyginsime naują nuotrauką su šia.</span></span></label>
-${f.err?`<p class="err-t" role="alert">⚠ ${f.err}</p>`:''}
-<button class="btn pri" data-a="f2save">Išsaugoti mano sprendimą</button>
-<button class="btn ghost" data-a="back">‹ Atgal į diagnozę</button>`};
+${note('ok','check',`Diagnozė patvirtinta: ${D.lt}`,'Pažymėk, ką darysi. Niekas neperkama ir nepurškiama automatiškai.')}
+<div class="tier"><span class="lbl"><span class="dot" style="background:var(--leaf)"></span>1 · Nekenksmingi (pradėk nuo jų)</span>${D.safe.map(box).join('')}</div>
+${D.bio.length?`<div class="tier"><span class="lbl"><span class="dot" style="background:#3b8f8a"></span>2 · Biologinės priemonės</span>${D.bio.map(box).join('')}</div>`:''}
+${D.chem.length?(chemOk?`<details class="more"><summary><span class="dot" style="background:var(--red)"></span> 3 · Cheminės (tik jei kiti nepadeda)</summary><div>${D.chem.map(box).join('').replace(/<label>/g,'<label class="sw">')}<p class="xs mute">Tik Lietuvoje registruoti produktai, laikykis etiketės (VMVT augalų apsaugos produktų registras).</p></div></details>`
+:`<p class="small mute">${I('info',16)} Cheminių priemonių nerodome: DI tikrumas šiai diagnozei ${dp} % (&lt; 50 %). Abejojant pasitark su specialistu.</p>`):''}
+<p class="xs mute">Šaltinis: patikrinta augalų apsaugos bazė (pavyzdiniai duomenys). Reklamos nėra.</p>
+<label class="sw card"><input type="checkbox" data-a="f2remind" ${f.remind?'checked':''}><span><b>Priminti po 7 dienų patikrinti, ar gerėja</b><br><span class="small mute">Palyginsime naują nuotrauką su šia.</span></span></label>
+${f.err?`<p class="err-t" role="alert">${I('warn',18)} ${f.err}</p>`:''}`};
+ACT.f2plan=()=>`<button class="btn pri big" data-a="f2save">Išsaugoti mano sprendimą</button>`;
+
 T.f2done='Sprendimas išsaugotas';
-V.f2done=()=>{const p=plantById(S.f2.plantId);if(!p||!p.treat)return `<div class="note info"><b>Sprendimas atšauktas</b><p>Niekas neišsaugota.</p></div><button class="btn pri" data-a="go" data-v="f2plan">‹ Grįžti į veiksmus</button>`;
+V.f2done=()=>{const p=plantById(S.f2.plantId);if(!p||!p.treat)return note('info','info','Sprendimas atšauktas','Niekas neišsaugota.');
 return `
-<div class="note ok"><b>✔ Sprendimas išsaugotas</b><p class="small">${SP[p.sp].lt}: ${DIS[p.treat.d].lt}. Pasirinkta veiksmų: ${p.treat.acts.length}.</p><p class="small">${p.treat.remind?'🔔 Po 7 dienų priminsime nufotografuoti lapą dar kartą.':'Priminimas neįjungtas: po savaitės pasitikrink pats (-i) „Mano augaluose“.'}</p></div>
-<div class="demo"><span class="tag">Prototipas: laiko imitacija</span><button class="btn" data-a="f2recheck">⏩ Imituoti: praėjo 7 dienos</button></div>
-<button class="btn" data-a="openPlant" data-v="${p.id}">Atidaryti augalą</button>
-<button class="btn ghost" data-a="home">Į pradžią</button>`};
+<div class="card hero" style="text-align:center;justify-items:center">
+  <span style="width:56px;height:56px;border-radius:50%;background:var(--strong);color:var(--onstrong);display:grid;place-items:center">${I('check',30)}</span>
+  <h2>Sprendimas išsaugotas</h2>
+  <p class="small">${SP[p.sp].lt}: ${DIS[p.treat.d].lt}. Pasirinkta veiksmų: ${p.treat.acts.length}.</p>
+  <p class="small row" style="justify-content:center">${I('bell',16)} ${p.treat.remind?'Po 7 dienų priminsime nufotografuoti lapą dar kartą.':'Priminimas neįjungtas.'}</p>
+</div>
+<div class="demo"><span class="chip demo">Prototipas · laikas</span><button class="btn" data-a="f2recheck">${I('clock')} Imituoti: praėjo 7 dienos</button></div>`};
+ACT.f2done=()=>{const p=plantById(S.f2.plantId);return p&&p.treat?`<button class="btn" data-a="openPlant" data-v="${p.id}">Atidaryti augalą</button>`:`<button class="btn pri" data-a="back">Grįžti į veiksmus</button>`};
 
-/* ---------- F2: specialistas ---------- */
 T.f2spec='Siųsti specialistui';
 V.f2spec=()=>{const f=S.f2;return `
-<h2>Siųsti specialistui</h2>
 <p class="small mute">Specialistas gaus tavo nuotraukas, atsakymus ir DI kandidatus su tikrumu.</p>
-<fieldset><legend>Kam siųsti?</legend><div class="opts">${['agronomas','augalų apsaugos konsultantas','parduotuvės konsultantė'].map(o=>`<label><input type="radio" name="to" data-a="f2to" value="${o}" ${f.specTo===o?'checked':''}>${o[0].toUpperCase()+o.slice(1)}</label>`).join('')}</div></fieldset>
-<label class="f">Pastaba (nebūtina) <span class="h">Iki 200 simbolių</span><textarea rows="3" maxlength="200" data-a="f2note" placeholder="pvz., purškiau prieš savaitę">${esc(f.specNote)}</textarea></label>
-<p class="small mute" id="cnt">${f.specNote.length}/200</p>
-<button class="btn pri" data-a="f2send">Siųsti</button>
-<button class="btn ghost" data-a="back">‹ Atgal</button>`};
+<fieldset><legend>Kam siųsti?</legend><div class="stack">${['Agronomui','Augalų apsaugos konsultantui','Parduotuvės konsultantei'].map(o=>`<label class="crow ${f.specTo===o?'sel':''}" style="grid-template-columns:auto 1fr"><input type="radio" name="to" data-a="f2to" value="${o}" ${f.specTo===o?'checked':''}><span class="n">${o}</span></label>`).join('')}</div></fieldset>
+<label class="f">Pastaba (nebūtina) <span class="h">Iki 200 simbolių</span><textarea rows="3" maxlength="200" data-a="f2note" aria-describedby="cnt" placeholder="pvz., purškiau prieš savaitę">${esc(f.specNote)}</textarea></label>
+<p class="xs mute" id="cnt" style="text-align:right">${f.specNote.length}/200</p>`};
+ACT.f2spec=()=>`<button class="btn pri big" data-a="f2send">Siųsti</button>`;
 T.f2sent='Išsiųsta';
-V.f2sent=()=>`
-<div class="note ok"><b>Išsiųsta: ${esc(S.f2.specTo)}</b><p class="small">Atsakymą paprastai gausi per 24 val. Iki tol nepurkšk chemijos; nekenksmingus veiksmus gali daryti jau dabar.</p></div>
-<button class="btn pri" data-a="home">Į pradžią</button>`;
+V.f2sent=()=>note('ok','check',`Išsiųsta: ${esc(S.f2.specTo.toLowerCase())}`,'Atsakymą paprastai gausi per 24 val. Iki tol nepurkšk chemijos; nekenksmingus veiksmus gali daryti jau dabar.');
+ACT.f2sent=()=>`<button class="btn pri" data-a="home">Į pradžią</button>`;
 
-/* ---------- F2: po 7 dienų ---------- */
 T.f2re='Pakartotinė patikra';
 V.f2re=()=>{const f=S.f2,p=plantById(f.plantId);return `
-<div class="note info"><b>🔔 Praėjo 7 dienos</b><p class="small">Laikas patikrinti, ar ${SP[p.sp].lt.toLowerCase()} gerėja. Nufotografuok tą patį lapą.</p></div>
-<div class="demo"><span class="tag">Prototipas: kameros imitacija</span><div class="grid2">
-<button class="sample" data-a="f2rePick" data-v="better" aria-pressed="${f.re==='better'}">${ph('roseBetter')}<b>Dėmių mažiau</b><span>Šaka „gerėja“</span></button>
-<button class="sample" data-a="f2rePick" data-v="worse" aria-pressed="${f.re==='worse'}">${ph('roseWorse')}<b>Dėmių daugiau</b><span>Šaka „negerėja“</span></button></div></div>
-<button class="btn pri" data-a="go" data-v="f2reRes" ${f.re?'':'disabled'}>Palyginti</button>`};
+${note('info','bell','Praėjo 7 dienos',`Laikas patikrinti, ar ${SP[p.sp].lt.toLowerCase()} gerėja. Nufotografuok tą patį lapą.`)}
+<div class="demo"><span class="chip demo" style="justify-self:start">Prototipas · kamera</span><div class="grid2">
+<button class="sample" data-a="f2rePick" data-v="better" aria-pressed="${f.re==='better'}">${ph('roseBetter')}<b>Dėmių mažiau</b><span class="h">šaka „gerėja“</span></button>
+<button class="sample" data-a="f2rePick" data-v="worse" aria-pressed="${f.re==='worse'}">${ph('roseWorse')}<b>Dėmių daugiau</b><span class="h">šaka „negerėja“</span></button></div></div>`};
+ACT.f2re=()=>`<button class="btn pri big" data-a="go" data-v="f2reRes" ${S.f2.re?'':'disabled'}>Palyginti</button>`;
 T.f2reRes='Palyginimas';
-V.f2reRes=()=>{const f=S.f2,b=f.re==='better';return `
-<span class="chip ai" style="justify-self:start">Sugeneruota DI</span>
-<div class="cmp">${ph('roseBs','Prieš 7 d.',spotsOverlay(F2OUT.bs.spots))}${ph(b?'roseBetter':'roseWorse','Šiandien',spotsOverlay(b?[[60,55,5],[34,38,4]]:[[34,38,10],[60,55,10],[44,70,8],[67,32,8],[64,78,8],[36,56,8]]))}</div>
-<div class="note ${b?'ok':'warn'}"><b>DI: ${b?'pažeistas plotas sumažėjo apie 60 %':'pažeistas plotas padidėjo apie 40 %'}</b><p class="small">Tikrumas 77 %. Palygink nuotraukas pats (-i).</p></div>
-<h3>Ar augalo būklė gerėja?</h3>
-<div class="row"><button class="btn pri" data-a="f2reAns" data-v="yes">Taip, gerėja</button><button class="btn" data-a="f2reAns" data-v="no">Ne, negerėja</button></div>`};
+V.f2reRes=()=>{const b=S.f2.re==='better';return `
+<div class="grid2"><div class="ph">${art('roseBs')}${spotsOverlay(F2OUT.bs.spots)}<span class="cap">prieš 7 d.</span></div><div class="ph">${art(b?'roseBetter':'roseWorse')}${spotsOverlay(b?[[60,55,5],[34,38,4]]:[[34,38,10],[60,55,10],[44,70,8],[67,32,8],[64,78,8],[36,56,8]])}<span class="cap">šiandien</span></div></div>
+<div class="card"><div class="chips"><span class="chip ai">DI</span><span class="chip mid">77 % · Vidutinis</span></div>
+<p><b>${b?'Pažeistas plotas sumažėjo apie 60 %':'Pažeistas plotas padidėjo apie 40 %'}</b></p><p class="small mute">Palygink nuotraukas ir nuspręsk pats (-i).</p></div>
+<h3>Ar augalo būklė gerėja?</h3>`;};
+ACT.f2reRes=()=>`<div class="row"><button class="btn pri" data-a="f2reAns" data-v="yes">Taip, gerėja</button><button class="btn" data-a="f2reAns" data-v="no">Ne, negerėja</button></div>`;
 T.f2end='Liga suvaldyta';
-V.f2end=()=>`
-<div class="note ok"><b>🌹 Liga suvaldyta</b><p class="small">Pažymėjai, kad būklė gerėja. Tęsk nekenksmingus veiksmus; chemijos nereikia.</p><p class="small">${S.train?'„Gerėja“ žyma padės modeliui įvertinti, ar diagnozė buvo teisinga.':''}</p></div>
-<button class="btn pri" data-a="home">Į pradžią</button>`;
+V.f2end=()=>`<div class="card hero" style="text-align:center;justify-items:center"><span style="width:56px;height:56px;border-radius:50%;background:var(--strong);color:var(--onstrong);display:grid;place-items:center">${I('leaf',30)}</span><h2>Liga suvaldyta</h2><p class="small">Pažymėjai, kad būklė gerėja. Tęsk nekenksmingus veiksmus, chemijos nereikia.</p>${S.train?'<p class="xs mute">„Gerėja“ žyma padės įvertinti, ar diagnozė buvo teisinga.</p>':''}</div>`;
+ACT.f2end=()=>`<button class="btn pri" data-a="home">Į pradžią</button>`;
 T.f2bad='Negerėja';
-V.f2bad=()=>{const o=F2OUT.bs;return `
-<div class="note warn"><b>Būklė negerėja</b><p class="small">Gali būti, kad diagnozė neteisinga arba liga plinta greitai.</p></div>
-<div class="card"><h3>Kita galima diagnozė</h3><p><b>${DIS[o.c[1][0]].lt}</b> <span class="la">${DIS[o.c[1][0]].la}</span></p><p class="small">${DIS[o.c[1][0]].feat}</p></div>
-<button class="btn pri" data-a="f2againFromBad">📷 Nauja patikra (nufotografuoti pažeistą lapą)</button>
-<button class="btn" data-a="go" data-v="f2spec">👩‍🌾 Siųsti specialistui</button>
-<button class="btn ghost" data-a="home">Į pradžią</button>`};
+V.f2bad=()=>{const k=F2OUT.bs.c[1][0];return `
+${note('warn','warn','Būklė negerėja','Gali būti, kad diagnozė neteisinga arba liga plinta greitai.')}
+<div class="card"><span class="lbl">Kita galima diagnozė</span><h3>${DIS[k].lt}</h3><p class="la small">${DIS[k].la}</p><p class="small">${DIS[k].feat}</p></div>`};
+ACT.f2bad=()=>`<button class="btn pri big" data-a="f2againFromBad">${I('cam')} Nauja patikra</button><button class="btn" data-a="go" data-v="f2spec">${I('user')} Siųsti specialistui</button>`;
 
 /* ================= RENDER ================= */
 function render(){
   const s=S.screen;const tab=TAB[s];
   document.documentElement.classList.toggle('big',!!S.big);
+  const act=ACT[s]?ACT[s]():'';
   document.getElementById('app').innerHTML=`
-<header class="bar">${s!=='home'?`<button class="ib" data-a="back" aria-label="Atgal">‹</button>`:'<span style="font-size:1.4em" aria-hidden="true">🌿</span>'}
-<h1>${T[s]||''}</h1>
-<button class="ib" data-a="big" aria-pressed="${!!S.big}" aria-label="Didesnis šriftas">A${S.big?'−':'+'}</button>
-<button class="ib" data-a="go" data-v="about" aria-label="Apie DI">ⓘ</button></header>
-<main>${V[s]()}</main>
-<nav class="tabs" aria-label="Pagrindinis meniu">${[['🏠','Pradžia','home'],['📷','Atpažinti','startF1'],['🩺','Ligų patikra','startF2'],['🪴','Mano augalai','tabPlants']].map(([i,t,a],k)=>`<button data-a="${a}" class="${tab===k?'on':''}" ${tab===k?'aria-current="page"':''}><span class="ico" aria-hidden="true">${i}</span>${t}</button>`).join('')}</nav>`;
+<header class="bar">${s==='home'?`<h1 style="font-size:1.55em">Augalai</h1><button class="ibtn" data-a="big" aria-pressed="${!!S.big}" aria-label="${S.big?'Įprastas':'Didesnis'} šriftas" title="Šrifto dydis">Aa</button>`
+  :`<button class="pill" data-a="back">‹ Atgal</button><h1>${T[s]||''}</h1>`}</header>
+<main class="${act?'has-act':''}">${V[s]()}</main>
+${act?`<div class="act">${act}</div>`:''}
+<nav class="tabs" aria-label="Pagrindinis meniu">${[['home','Pradžia','home'],['cam','Atpažinti','startF1'],['pulse','Ligų patikra','startF2'],['leaf','Mano augalai','tabPlants']].map(([i,t,a],k)=>`<button data-a="${a}" class="${tab===k?'on':''}" ${tab===k?'aria-current="page"':''}>${I(i,22)}${t}</button>`).join('')}</nav>`;
   renderToast();
 }
 
@@ -778,7 +838,7 @@ function f2Outcome(){
 function needIntro(next){if(!S.intro){S.afterIntro=next;go('intro');return true}return false}
 function savePlant(spKey,src,extra={}){
   const f=S.f1;const ph0=f.photos[0]||{img:SP[spKey].img};
-  const pl={id:S.nextId++,sp:spKey,img:ph0.img,url:ph0.url,src,date:new Date().toLocaleDateString('lt-LT'),cands:f.out?f.out.c.map(x=>x[0]):[],spots:!!(f.out&&f.out.spots),expert:S.expert,...extra};
+  const pl={id:S.nextId++,sp:spKey,srcShort:/katalog/i.test(src)?'katalogas, be DI':/gentis/.test(src)?'gentis':'DI + patvirtinta',img:ph0.img,url:ph0.url,src,date:new Date().toLocaleDateString('lt-LT'),cands:f.out?f.out.c.map(x=>x[0]):[],spots:!!(f.out&&f.out.spots),expert:S.expert,...extra};
   S.plants.unshift(pl);S.plantId=pl.id;
   go('f1saved');
   toast('Išsaugota „Mano augaluose“',()=>{S.plants=S.plants.filter(p=>p.id!==pl.id);S.plantId=null;render();say('Išsaugojimas atšauktas')});
@@ -825,19 +885,19 @@ const A={
   f1lowOk:(el)=>{S.f1.lowOk=el.checked;render()},
   f1doSave:()=>{const f=S.f1;savePlant(f.out.c[f.sel][0],`DI pasiūlymas (žemas tikrumas ${f.out.c[f.sel][1]} %), patvirtino naudotojas`,{unverified:true})},
   f1saveGenus:()=>{const f=S.f1;savePlant(f.out.genus,`Išsaugota kaip gentis (DI ${f.out.gp} %)`)},
-  f1none:()=>{S.f1.q='';S.f1.catSel=null;S.f1.catErr='';go('f1cat')},
+  f1none:()=>{S.f1.catMode=null;S.f1.q='';S.f1.catSel=null;S.f1.catErr='';go('f1cat')},
   f1catSel:(el)=>{S.f1.catSel=el.dataset.v;S.f1.catErr='';render()},
-  f1catSave:()=>{const f=S.f1;if(!f.catSel){f.catErr='Pirmiausia pasirink augalą iš sąrašo.';render();return}savePlant(f.catSel,'Pasirinkta kataloge (be DI)')},
+  f1catSave:()=>{const f=S.f1;if(!f.catSel){f.catErr='Pirmiausia pasirink augalą iš sąrašo.';render();return}if(f.catMode==='chg'){S.chg=f.catSel;f.catMode=null;go('chgok');return}savePlant(f.catSel,'Pasirinkta kataloge (be DI)')},
   f2forPlant:(el)=>{if(needIntro('f2pick'))return;S.f2=NEWF2();S.f2.plantId=+el.dataset.v;go('f2cap')},
   f1fromF2:()=>{S.f1=NEWF1();go('f1cap')},
-  seedRose:()=>{S.plants.unshift({id:S.nextId++,sp:'rose',img:'rose',src:'DI pasiūlymas, patvirtino naudotojas (pavyzdys)',date:new Date().toLocaleDateString('lt-LT'),cands:['rose','canina','rubus']});render()},
-  f2pick:(el)=>{const f=S.f2,id=el.dataset.v,i=f.photos.findIndex(p=>p.sample===id);const s=F2S.find(x=>x.id===id);
+  seedRose:()=>{S.plants.unshift({id:S.nextId++,sp:'rose',srcShort:'DI + patvirtinta',img:'rose',src:'DI pasiūlymas, patvirtino naudotojas (pavyzdys)',date:new Date().toLocaleDateString('lt-LT'),cands:['rose','canina','rubus']});render()},
+  f2pick:(el)=>{S.f2.noDmg=false;const f=S.f2,id=el.dataset.v,i=f.photos.findIndex(p=>p.sample===id);const s=F2S.find(x=>x.id===id);
     if(i>=0)f.photos.splice(i,1);else{if(f.photos.length>=3){f.err='Galima ne daugiau kaip 3 nuotraukos.';render();return}
       if(s.part==='Pažeista dalis')f.photos=f.photos.filter(p=>p.part!=='Pažeista dalis');f.photos.push({sample:id,img:s.img,part:s.part})}
     f.err='';render()},
   f2rm:(el)=>{S.f2.photos.splice(+el.dataset.i,1);render()},
   f2q:(el)=>{S.f2.q[el.dataset.v]=el.value;if(el.dataset.v==='bugs')render()},
-  f2analyze:()=>{const f=S.f2;if(!f.q.when||!f.q.spread||!f.q.bugs){f.qErr=true;render();say('Atsakyk į visus klausimus');document.querySelector('[aria-invalid],.err-t')?.scrollIntoView({block:'center'});return}
+  f2analyze:()=>{const f=S.f2;f.noDmg=!f.photos.some(p=>p.part==='Pažeista dalis');if(f.noDmg||!f.q.when||!f.q.spread||!f.q.bugs){f.qErr=true;render();say('Atsakyk į visus klausimus');document.querySelector('[aria-invalid],.err-t')?.scrollIntoView({block:'center'});return}
     f.qErr=false;startAnalysis('f2')},
   f2spots:(el)=>{S.f2.showSpots=el.checked;render()},
   f2confirm:()=>{S.f2.acts=new Set(DIS[curDis()[0]].safe);S.f2.remind=false;S.f2.err='';go('f2plan')},
@@ -863,7 +923,8 @@ const A={
   chgStart:()=>{S.chg=null;go('chg')},
   chgSel:(el)=>{S.chg=el.dataset.v;render()},
   chgNext:()=>go('chgok'),
-  chgDo:()=>{const p=plantById(S.plantId);const old=p.sp;p.sp=S.chg;p.src='Pataisyta naudotojo'+(S.expert?' (eksperto žyma)':'');p.unverified=false;S.stack=['home','plants'];go('plant',{push:false});
+  chgCat:()=>{S.f1.q='';S.f1.catSel=null;S.f1.catErr='';S.f1.catMode='chg';go('f1cat')},
+  chgDo:()=>{const p=plantById(S.plantId);const old=p.sp;p.sp=S.chg;p.src='Pataisyta naudotojo';p.srcShort='pataisyta naudotojo';p.unverified=false;S.stack=['home','plants'];go('plant',{push:false});
     toast('Rūšis pakeista, planas ir rizika perskaičiuoti',()=>{p.sp=old;render()})},
   delAsk:()=>{S.delAsk=true;render()},
   delNo:()=>{S.delAsk=false;render()},
