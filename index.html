@@ -56,7 +56,8 @@ svg.ic{flex:none}
 h2{font-family:var(--disp);font-size:1.45em;line-height:1.15;margin:4px 0 0;text-wrap:balance}
 h3{font-family:var(--disp);font-size:1.08em;line-height:1.2;margin:0}
 p{margin:0}
-.mute{color:var(--mute)} .small{font-size:.88em} .xs{font-size:.78em}
+.mute{color:var(--mute)}
+main{overflow-wrap:anywhere} .small{font-size:.88em} .xs{font-size:.78em}
 .lbl{font-family:var(--mono);font-size:.72em;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
 .card{background:var(--paper);border-radius:18px;box-shadow:var(--shadow);outline:1px solid var(--line);padding:16px;display:grid;gap:10px}
 .card.soft{background:var(--fill);outline:0;box-shadow:none}
@@ -283,7 +284,7 @@ let S={screen:'home',stack:[],intro:false,loc:false,train:false,expert:false,slo
 const timers=[];
 function clearT(){while(timers.length)clearInterval(timers.pop())}
 function dropToast(){if(S.toast){clearInterval(S.toast.iv);S.toast=null}}
-function go(screen,{push=true,replace=false}={}){clearT();dropToast();if(push&&!replace&&S.screen!==screen)S.stack.push(S.screen);S.screen=screen;render();window.scrollTo(0,0);enter();}
+function go(screen,{push=true,replace=false}={}){clearT();dropToast();if(push&&!replace&&S.screen!==screen&&S.screen!=='an')S.stack.push(S.screen);S.screen=screen;render();window.scrollTo(0,0);enter();}
 function back(){clearT();dropToast();if(S.an)S.an=null;S.screen=S.stack.pop()||'home';render();window.scrollTo(0,0);enter();}
 function home(){S.stack=[];go('home',{push:false})}
 function say(t){document.getElementById('live').textContent=t}
@@ -559,7 +560,7 @@ V.f1cat=()=>{const f=S.f1;const q=f.q.trim().toLowerCase();const list=q.length<2
 return `
 <p class="small mute">Paieška be DI: rask augalą pagal pavadinimą ir palygink pats (-i).</p>
 <label class="f">Augalo pavadinimas <span class="h">Lietuviškai arba lotyniškai, bent 2 raidės</span>
-<input type="search" data-a="f1q" value="${esc(f.q)}" placeholder="pvz., monstera" autocomplete="off" ${q.length>=2&&!list.length?'aria-invalid="true"':''}></label>
+<input type="search" data-a="f1q" maxlength="40" value="${esc(f.q)}" placeholder="pvz., monstera" autocomplete="off" ${q.length>=2&&!list.length?'aria-invalid="true"':''}></label>
 ${q.length===1?`<p class="xs mute">Įvesk dar bent vieną raidę.</p>`:''}
 ${q.length>=2&&!list.length?note('warn','search',`Nieko nerasta pagal „${esc(f.q)}“`,'Patikrink rašybą arba pabandyk lotynišką pavadinimą.'):''}
 <div class="stack" role="radiogroup" aria-label="Katalogo rezultatai">${list.map(k=>`<label class="crow ${f.catSel===k?'sel':''}"><input type="radio" name="cat" data-a="f1catSel" data-v="${k}" ${f.catSel===k?'checked':''}>${ph(SP[k].img)}<span><span class="n">${SP[k].lt}</span><br><span class="la small">${SP[k].la}</span></span><span></span></label>`).join('')}</div>
@@ -874,7 +875,7 @@ const A={
   f1anyway:()=>{S.f1.forced=true;S.stack.pop();S.stack.push('f1cap');startAnalysis('f1')},
   f1again:()=>{S.f1=NEWF1();S.stack=['home'];go('f1cap',{push:false})},
   anWait:()=>{S.an.waiting=true;render()},
-  anCancel:()=>{clearT();S.cancelFn=S.an.fn;S.an=null;go('f1cancel',{push:false})},
+  anCancel:()=>{if(!S.an){home();return}clearT();S.cancelFn=S.an.fn;S.an=null;go('f1cancel',{push:false})},
   offRetry:()=>{S.slow=false;S.queue=[];startAnalysis(S.lastFn||'f1')},
   offDel:()=>{S.queue=[];S.cancelFn=S.lastFn;go('f1cancel',{push:false})},
   queueSend:()=>{S.slow=false;const q=S.queue[0];S.queue=[];S.stack=['home'];startAnalysis(q.fn)},
