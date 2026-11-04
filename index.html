@@ -434,7 +434,8 @@ V.about=()=>`
   <div class="chips"><span class="chip ai">F1</span><h3>Augalo atpažinimas</h3></div>
   <div class="kv">
   <div><b>Uždavinio tipas</b><span>Vaizdų klasifikavimas į daug klasių: top-3 rūšys su kalibruotu tikrumu. Prieš tai veikia nuotraukos kokybės klasifikatorius (ryški / neryški, augalas / ne, kuri augalo dalis).</span></div>
-  <div><b>Modelis</b><span>Esamas atpažinimo modelis per API (ne kuriamas savas), suderintas Lietuvos augalijai. Tikrumas kalibruojamas (temperature scaling): 80 % reiškia „teisinga maždaug 8 iš 10 kartų“.</span></div>
+  <div><b>Modelis</b><span>Giliojo mokymosi vaizdų modelis (konvoliucinis tinklas arba vision transformer, pvz., EfficientNet ar ViT), iš anksto apmokytas ir suderintas (fine-tuning) Lietuvos augalijai; naudojamas per API, ne kuriamas nuo nulio. Tikrumas kalibruojamas (temperature scaling): 80 % reiškia „teisinga maždaug 8 iš 10 kartų“.</span></div>
+  <div><b>Klasės</b><span>Apie 1 100 rūšių (PlantNet-300K turi 1 081 klasę) ir papildomos Lietuvos rūšys; kokybės modelis – 3 klasės (tinkama, neryški, ne augalas). Tai klasifikavimas, klasterizavimas nenaudojamas.</span></div>
   <div><b>Duomenų rinkinys</b><span>PlantNet-300K ir iNaturalist stebėjimai Lietuvoje, papildyti panašiomis ir pavojingomis rūšimis (barščiai). Kokybės modeliui – dirbtinai sugadintos nuotraukos (neryškios, tamsios).</span></div>
   <div><b>Žymės</b><span>Rūšies lotyniškas pavadinimas, gentis, augalo dalis, kokybė (tinkama / netinkama). Naudotojų patvirtinimai ir pataisymai – papildomos žymės, specialisto pataisymas turi didesnį svorį. Nuotraukos mokymui – tik su sutikimu.</span></div>
   <div><b>Slenksčiai</b><span>Aukštas ≥ 80 %, vidutinis 50–79 %, žemas &lt; 50 %. „Nesu tikras“, kai top-1 &lt; 50 % arba top-1 ir top-2 skiriasi &lt; 15 proc. punktų.</span></div>
@@ -445,12 +446,14 @@ V.about=()=>`
   <div class="chips"><span class="chip ai">F2</span><h3>Ligų patikra</h3></div>
   <div class="kv">
   <div><b>Uždavinio tipas</b><span>Klasifikavimas (iki 3 ligų ar kenkėjų + klasė „ligos požymių nerasta“) ir objektų aptikimas (pažeistų vietų žymėjimas). Gydymo veiksmai – iš patikrintos bazės pagal patvirtintą diagnozę.</span></div>
+  <div><b>Modelis ir klasės</b><span>Objektų aptikimo modelis (pvz., YOLO) pažeistoms vietoms ir vaizdų klasifikatorius ligai; apie 40 klasių (PlantVillage turi 38, PlantDoc 27) ir „ne ligos“ klasės. Klausimų atsakymai naudojami kaip papildomi požymiai.</span></div>
   <div><b>Duomenų rinkinys</b><span>PlantVillage ir PlantDoc + Lietuvos sodų nuotraukos (rožės, obelys, daržovės), pažymėtos su augalų apsaugos specialistais; kiekvienai ligai – ir panašūs „ne ligos“ atvejai.</span></div>
   <div><b>Žymės</b><span>Ligos ar kenkėjo klasė, „ne liga“ klasės (maisto medžiagų trūkumas, saulės nudegimas), pažeistų vietų rėmeliai, rūšis iš F1, specialisto patvirtinimas, „gerėja / negerėja“ po 7 d.</span></div>
   <div><b>Slenksčiai</b><span>&lt; 50 % – būsena „Neaišku“, chemijos nėra, siūloma nauja nuotrauka arba specialistas. Cheminės priemonės – tik ≥ 50 % ir patvirtinus. Žodžio „Sveikas“ nenaudojame.</span></div>
   </div>
   ${note('info','shield','Brangesnė klaida: klaidingai neigiama (FN)','Praleista liga plinta ir sunaikina derlių (ND1: „Healthy!“ sergančiam lapui, PR-19). FP kainuoja mažiau, nes pirmiausia siūlomi nekenksmingi veiksmai, o chemija tik patvirtinus. Todėl prioritetas yra <b>recall</b> būsenai „serga“.')}
 </div>
+<div class="card"><h3>NLP ir GenAI</h3><p class="small">F1 ir F2 dirba tik su vaizdais, o F2 klausimai yra fiksuoti pasirinkimai, todėl kalbos modelių (BERT, LLM), RAG ar agentų čia nėra. Visi tekstai (požymiai, gydymo veiksmai, įspėjimai) imami iš patikrintos bazės, ne generuojami. GenAI su RAG numatytas F3 (priežiūros planas), kuri yra kito nario funkcija.</p></div>
 <div class="card">
   <h3>Žmogaus kontrolė (HITL)</h3>
   <ul class="clean small">
