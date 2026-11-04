@@ -379,11 +379,10 @@ ${S.queue.length?note('warn','wifi','1 nuotrauka laukia eilėje','Išsiųsime an
   <p class="small mute">Nufotografuok pažeistą lapą. DI pažymi dėmes ir pasiūlo veiksmus: pirmiausia nekenksmingus. Ar gydyti, sprendi tu.</p>
   <button class="btn big" data-a="startF2">${I('pulse',22)} Patikrinti augalą</button>
 </section>
-<details class="card soft"><summary class="small"><b>Ką DI moka ir ko ne</b></summary><p class="small">Atpažįsta Lietuvoje auginamus ir laukinius augalus pagal lapą, žiedą ar visą augalą, įspėja apie nuodingas ir invazines rūšis. Ligų patikra skirta rožių, obelų ir daržovių lapų ligoms ir kenkėjams.</p><p class="small">Neatpažįsta grybų ir vabzdžių rūšių, nediagnozuoja šaknų ligų, nevertina, ar augalas valgomas. DI gali klysti, todėl rezultatą visada patvirtini tu.</p></details>
 <div class="row" style="justify-content:space-between"><h3>Mano augalai</h3><span class="small mute">${S.plants.length} augal.</span></div>
 ${S.plants.length?S.plants.slice(0,3).map(plantRow).join(''):`<div class="card soft" style="text-align:center"><p class="small mute">Dar neturi išsaugotų augalų.<br>Atpažintas augalas atsiras čia.</p></div>`}
 <div class="grid2">
-  <button class="card" style="text-align:left;border:0" data-a="go" data-v="about">${I('info',22)}<b>Kaip veikia DI?</b><span class="xs mute">Modeliai, duomenys, tikrumas, klaidos</span></button>
+  <button class="card" style="text-align:left;border:0" data-a="go" data-v="about">${I('info',22)}<b>Kaip veikia DI?</b><span class="xs mute">Ką DI moka ir ko ne, modeliai, tikrumas, klaidos</span></button>
   <button class="card" style="text-align:left;border:0" data-a="go" data-v="guide">${I('user',22)}<b>Vertintojams</b><span class="xs mute">Personos ir kaip pasiekti kiekvieną šaką</span></button>
 </div>
 <p class="xs mute" style="text-align:center">Be reklamų · be dienos limito · be paskyros · vieta išjungta</p>`;
@@ -430,6 +429,7 @@ V.guide=()=>`
 T.about='Kaip veikia DI';
 V.about=()=>`
 <p class="small mute">Prototipe DI rezultatai imituojami pavyzdiniais duomenimis. Čia aprašyta, kaip veiktų tikri modeliai.</p>
+<div class="card"><h3>Ką DI moka ir ko ne</h3><p class="small"><b>Moka:</b> atpažinti Lietuvoje auginamus ir laukinius augalus pagal lapą, žiedą ar visą augalą, įspėti apie nuodingas ir invazines rūšis, patikrinti rožių, obelų ir daržovių lapų ligas ir kenkėjus.</p><p class="small"><b>Nemoka:</b> atpažinti grybų ir vabzdžių rūšių, diagnozuoti šaknų ligų, pasakyti, ar augalas valgomas. DI gali klysti, todėl rezultatą visada patvirtini tu.</p></div>
 <div class="card">
   <div class="chips"><span class="chip ai">F1</span><h3>Augalo atpažinimas</h3></div>
   <div class="kv">
