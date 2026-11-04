@@ -254,7 +254,8 @@ const BAND=p=>p>=80?['Aukštas','hi']:p>=50?['Vidutinis','mid']:['Žemas','lo'];
 
 /* ================= NUOTRAUKŲ PIEŠINIAI (SVG imitacijos) ================= */
 let UID=0;
-function art(kind){
+const ALT={mon:'Monsteros lapas su įpjovomis ir skylėmis',mon2:'Monsteros lapas iš bazės',monBlur:'Neryški, tamsi monsteros lapo nuotrauka',ada:'Adansono monsteros lapas su uždaromis skylėmis',philo:'Filodendro giliai įkirptas lapas',pothos:'Potoso lapas be skylių',hog:'Barščio lapas su dantytais kraštais',hog2:'Barščio lapas iš bazės',hog3:'Barščio lapas iš bazės',umbel:'Balti barščio skėtiniai žiedynai',stem:'Tik augalo stiebo dalis be lapo',rose:'Rožės šakelė su sveikais lapais',roseOk:'Rožės lapai be dėmių',roseBs:'Rožės lapai su juodomis dėmėmis ir geltonu audiniu aplink',roseBetter:'Rožės lapai po 7 dienų, dėmių mažiau',roseWorse:'Rožės lapai po 7 dienų, dėmių daugiau ir jos didesnės',roseUn:'Neryški rožės lapų nuotrauka su rusvomis dėmėmis',roseRust:'Rožės lapai su oranžinėmis rūdžių dėmelėmis',roseMil:'Rožės lapai su baltomis miltligės apnašomis',bush:'Visas rožių krūmas su žiedais',leaf:'Augalo lapas'};
+function art(kind,dec,cap){
   const id='g'+(UID++);
   const leafPath='M50 90C20 84 6 58 12 36C18 15 38 8 50 22C62 8 82 15 88 36C94 58 80 84 50 90Z';
   const mon=(bg)=>`<path d="${leafPath}" fill="url(#${id})"/><path d="M50 90V24" stroke="#1f5135" stroke-width="1.6"/>
@@ -288,12 +289,12 @@ function art(kind){
     case 'bush':body=`<ellipse cx="50" cy="62" rx="40" ry="30" fill="url(#${id})"/><path d="M50 100V80" stroke="#6b5640" stroke-width="4"/>${dots('#c2334a',[[30,48,5],[56,40,5.5],[72,58,5],[40,66,4.5]])}${dots('#1b1a17',[[62,70,1.6],[46,56,1.3],[30,72,1.4]])}`;break;
     default:body=`<path d="M50 90C20 70 20 30 50 10C80 30 80 70 50 90Z" fill="url(#${id})"/><path d="M50 90V14" stroke="#1f5135" stroke-width="1.4"/>`;
   }
-  return `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6cbf7f"/><stop offset="1" stop-color="#256a3e"/></linearGradient><filter id="b${id}"><feGaussianBlur stdDeviation="2.4"/></filter></defs><rect width="100" height="100" fill="${bg}"/>${body}</svg>`;
+  return `<svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice" ${dec?'aria-hidden="true"':`role="img" aria-label="${(ALT[kind]||'Augalo nuotrauka')+(cap?' ('+esc(cap)+')':'')}"`}><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6cbf7f"/><stop offset="1" stop-color="#256a3e"/></linearGradient><filter id="b${id}"><feGaussianBlur stdDeviation="2.4"/></filter></defs><rect width="100" height="100" fill="${bg}"/>${body}</svg>`;
 }
-const ph=(kind,cap,extra='',url)=>`<div class="ph">${url?`<img src="${url}" alt="${esc(cap||'Tavo nuotrauka')}">`:art(kind)}${extra}${cap?`<span class="cap">${esc(cap)}</span>`:''}</div>`;
+const ph=(kind,cap,extra='',url,dec)=>`<div class="ph">${url?`<img src="${url}" alt="${dec?'':esc(cap||'Tavo nuotrauka')}">`:art(kind,dec,cap)}${extra}${cap?`<span class="cap">${esc(cap)}</span>`:''}</div>`;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const regOverlay=(cx,cy,r)=>`<svg viewBox="0 0 100 100" style="position:absolute;inset:0;width:100%;height:100%" aria-hidden="true"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#ffd400" stroke-width="2.5" stroke-dasharray="5 3"/></svg>`;
-const spotsOverlay=arr=>`<svg viewBox="0 0 100 100" style="position:absolute;inset:0;width:100%;height:100%" aria-hidden="true">${arr.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#ff2d55" stroke-width="2"/>`).join('')}</svg>`;
+const regOverlay=(cx,cy,r)=>`<svg viewBox="0 0 100 100" style="position:absolute;inset:0;width:100%;height:100%" role="img" aria-label="Geltonu apskritimu pažymėta nuotraukos sritis, kuri labiausiai lėmė DI rezultatą"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#ffd400" stroke-width="2.5" stroke-dasharray="5 3"/></svg>`;
+const spotsOverlay=arr=>`<svg viewBox="0 0 100 100" style="position:absolute;inset:0;width:100%;height:100%" role="img" aria-label="Raudonai apibrėžtos ${arr.length} pažeistos vietos, kurias aptiko DI">${arr.map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="#ff2d55" stroke-width="2"/>`).join('')}</svg>`;
 
 /* ================= BŪSENA ================= */
 const NEWF1=()=>({photos:[],forced:false,out:null,sel:0,err:'',from:null,lowOk:false,q:'',catSel:null,catErr:''});
@@ -479,7 +480,7 @@ return `
 <p class="mute">1–3 nuotraukos: lapas, žiedas arba visas augalas. Fotografuok visą lapą iš arti, šviesoje.</p>
 <div class="demo">
   <div class="row" style="justify-content:space-between"><span class="chip demo">Prototipas · kamera</span><span class="xs mute">Pasirink 1–3</span></div>
-  <div class="grid3">${F1S.map(s=>`<button class="sample" data-a="f1pick" data-v="${s.id}" aria-pressed="${sel(s.id)}">${ph(s.img)}<b>${s.t}</b><span class="h">${s.k}</span></button>`).join('')}</div>
+  <div class="grid3">${F1S.map(s=>`<button class="sample" data-a="f1pick" data-v="${s.id}" aria-pressed="${sel(s.id)}">${ph(s.img,'','',null,true)}<b>${s.t}</b><span class="h">${s.k}</span></button>`).join('')}</div>
   <label class="sw small"><input type="checkbox" data-a="tog" data-v="slow" ${S.slow?'checked':''}><span>Imituoti silpną ryšį (K6)</span></label>
 </div>
 ${f.err?`<p class="err-t" role="alert">${I('warn',18)} ${esc(f.err)}</p>`:''}
@@ -559,7 +560,7 @@ return o.genus?`<button class="btn pri" data-a="f1saveGenus">Išsaugoti kaip gen
 T.f1why='Kodėl šis rezultatas?';
 V.f1why=()=>{const f=S.f1,o=f.out,[k,p]=o.c[f.sel],sp=SP[k],alt=o.c.filter((_,i)=>i!==f.sel);
 return `
-<div class="ph" style="max-width:280px">${f.photos[0].url?`<img src="${f.photos[0].url}" alt="">`:art(f.photos[0].img)}${regOverlay(...o.reg)}<span class="cap">geltona sritis lėmė rezultatą</span></div>
+<div class="ph" style="max-width:280px">${f.photos[0].url?`<img src="${f.photos[0].url}" alt="Tavo nuotrauka">`:art(f.photos[0].img)}${regOverlay(...o.reg)}<span class="cap">geltona sritis lėmė rezultatą</span></div>
 <div class="card">
   <div class="chips"><span class="chip ai">DI</span><span class="chip ${BAND(p)[1]}">${p} % · ${BAND(p)[0]}</span></div>
   <h3>${sp.lt}</h3>
@@ -653,7 +654,7 @@ return `
 <div><h3>1. Nufotografuok pažeistą lapą</h3><p class="small mute">Būtina pažeistos vietos nuotrauka iš arti. Viso augalo nuotrauka nebūtina, bet padidina tikrumą.</p></div>
 <div class="demo">
   <span class="chip demo" style="justify-self:start">Prototipas · kamera</span>
-  <div class="grid2">${F2S.map(s=>`<button class="sample" data-a="f2pick" data-v="${s.id}" aria-pressed="${sel(s.id)}">${ph(s.img)}<b>${s.t}</b><span class="h">${s.k}</span></button>`).join('')}</div>
+  <div class="grid2">${F2S.map(s=>`<button class="sample" data-a="f2pick" data-v="${s.id}" aria-pressed="${sel(s.id)}">${ph(s.img,'','',null,true)}<b>${s.t}</b><span class="h">${s.k}</span></button>`).join('')}</div>
   <label class="sw small"><input type="checkbox" data-a="tog" data-v="slow" ${S.slow?'checked':''}><span>Imituoti silpną ryšį (K6)</span></label>
 </div>
 <label class="btn" style="cursor:pointer">${I('img')} Įkelti iš galerijos<input type="file" accept="image/*" data-a="f2file" class="sr"></label>
@@ -687,7 +688,7 @@ if(o.status==='Ligos požymių nerasta')return `
 <button class="btn" data-a="f2remindNone">${I('bell')} Priminti patikrinti po 7 d.</button>
 <button class="btn" disabled>Gal tai priežiūros klaida? (F4, kito nario funkcija)</button>`;
 const low=o.status==='Neaišku';const [d,p]=curDis();const D=DIS[d];const b=BAND(p);
-const pic=`<div class="ph">${dmg.url?`<img src="${dmg.url}" alt="">`:art(dmg.img)}${f.showSpots?spotsOverlay(o.spots):''}<span class="cap">${f.showSpots?'pažymėtos pažeistos vietos':'tavo nuotrauka'}</span></div>`;
+const pic=`<div class="ph">${dmg.url?`<img src="${dmg.url}" alt="Tavo pažeisto lapo nuotrauka">`:art(dmg.img)}${f.showSpots?spotsOverlay(o.spots):''}<span class="cap">${f.showSpots?'pažymėtos pažeistos vietos':'tavo nuotrauka'}</span></div>`;
 if(low)return `
 ${note('warn','info',`Neaišku: tikrumas žemas (${o.c[0][1]} %)`,'Požymiai gali reikšti ne ligą, o maisto medžiagų trūkumą ar saulės nudegimą. Cheminių priemonių nerodome.')}
 <div class="grid2">${pic}<div class="stack">${o.c.map(([k,pp])=>`<div><p class="small"><b>${DIS[k].lt}</b>${DIS[k].kind!=='liga'?' <span class="chip">ne liga</span>':''}</p><div class="row"><div class="meter lo" style="flex:1"><i style="width:${pp}%"></i></div><span class="xs" style="font-family:var(--mono)">${pp} %</span></div></div>`).join('')}</div></div>
@@ -716,7 +717,7 @@ return `<button class="btn pri big" data-a="f2confirm">${I('check')} Panašu: pa
 
 T.f2why='Kodėl?';
 V.f2why=()=>{const f=S.f2,o=f.out,[d,p]=curDis(),D=DIS[d],dmg=dmgPhoto();return `
-<div class="ph" style="max-width:280px">${dmg.url?`<img src="${dmg.url}" alt="">`:art(dmg.img)}${spotsOverlay(o.spots)}<span class="cap">pažymėtos vietos lėmė rezultatą</span></div>
+<div class="ph" style="max-width:280px">${dmg.url?`<img src="${dmg.url}" alt="Tavo pažeisto lapo nuotrauka">`:art(dmg.img)}${spotsOverlay(o.spots)}<span class="cap">pažymėtos vietos lėmė rezultatą</span></div>
 <div class="card">
   <div class="chips"><span class="chip ai">DI</span><span class="chip ${BAND(p)[1]}">${p} % · ${BAND(p)[0]}</span></div>
   <h3>${D.lt}</h3>
