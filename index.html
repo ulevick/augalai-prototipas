@@ -97,7 +97,11 @@ main{overflow-wrap:anywhere} .small{font-size:.88em} .xs{font-size:.78em}
 .sample b{font-size:.8em;line-height:1.2;font-weight:600}
 .sample .h{font-family:var(--mono);font-size:.62em;color:var(--mute);line-height:1.3}
 .sample[aria-pressed="true"] .h{color:var(--ink)}
-.as-sel{gap:8px}.as-sel p{margin:0}.as-sel label{display:grid;gap:4px}
+.as-sel{gap:8px}
+
+.desk-only{display:none}
+@media (min-width:900px){.desk-only{display:inline}}
+body.dragging main{outline:3px dashed var(--demo);outline-offset:-8px}.as-sel p{margin:0}.as-sel label{display:grid;gap:4px}
 .meter{height:8px;background:var(--fill2);border-radius:4px;overflow:hidden}
 .meter i{display:block;height:100%;background:var(--strong);border-radius:4px}
 .meter.mid i{background:var(--amber)} .meter.lo i{background:var(--red)}
@@ -375,6 +379,7 @@ ${S.queue.length?note('warn','wifi','1 nuotrauka laukia eilėje','Išsiųsime an
   <p class="small mute">Nufotografuok pažeistą lapą. DI pažymi dėmes ir pasiūlo veiksmus: pirmiausia nekenksmingus. Ar gydyti, sprendi tu.</p>
   <button class="btn big" data-a="startF2">${I('pulse',22)} Patikrinti augalą</button>
 </section>
+<details class="card soft"><summary class="small"><b>Ką DI moka ir ko ne</b></summary><p class="small">Atpažįsta Lietuvoje auginamus ir laukinius augalus pagal lapą, žiedą ar visą augalą, įspėja apie nuodingas ir invazines rūšis. Ligų patikra skirta rožių, obelų ir daržovių lapų ligoms ir kenkėjams.</p><p class="small">Neatpažįsta grybų ir vabzdžių rūšių, nediagnozuoja šaknų ligų, nevertina, ar augalas valgomas. DI gali klysti, todėl rezultatą visada patvirtini tu.</p></details>
 <div class="row" style="justify-content:space-between"><h3>Mano augalai</h3><span class="small mute">${S.plants.length} augal.</span></div>
 ${S.plants.length?S.plants.slice(0,3).map(plantRow).join(''):`<div class="card soft" style="text-align:center"><p class="small mute">Dar neturi išsaugotų augalų.<br>Atpažintas augalas atsiras čia.</p></div>`}
 <div class="grid2">
@@ -477,7 +482,7 @@ ACT.intro=()=>`<button class="btn pri big" data-a="introOk">Supratau, tęsti</bu
 T.f1cap='Atpažinti augalą';
 V.f1cap=()=>{const f=S.f1;const sel=id=>f.photos.some(p=>p.sample===id);
 return `
-<p class="mute">1–3 nuotraukos: lapas, žiedas arba visas augalas. Fotografuok visą lapą iš arti, šviesoje.</p>
+<p class="mute">1–3 nuotraukos: lapas, žiedas arba visas augalas. Fotografuok visą lapą iš arti, šviesoje.<span class="desk-only"> Kompiuteryje nuotrauką gali nutempti į šį langą.</span></p>
 <div class="demo">
   <div class="row" style="justify-content:space-between"><span class="chip demo">Prototipas · kamera</span><span class="xs mute">Pasirink 1–3</span></div>
   <div class="grid3">${F1S.map(s=>`<button class="sample" data-a="f1pick" data-v="${s.id}" aria-pressed="${sel(s.id)}">${ph(s.img,'','',null,true)}<b>${s.t}</b><span class="h">${s.k}</span></button>`).join('')}</div>
@@ -545,6 +550,7 @@ ${o.spots?note('info','pulse','Matome dėmių ant lapų','Patvirtinus rūšį ga
   <p class="xs mute">Palyginamosios nuotraukos iš bazės</p>
   <div class="grid3">${ph(f.photos[0].img,'tavo','',f.photos[0].url)}${(sp.cmp||[sp.img,sp.img]).map((im,j)=>ph(im,['pavyzdys','iš bazės'][j])).join('')}</div>
   <p class="small"><b>Skiriamasis požymis:</b> ${sp.feat}</p>
+  <p class="xs mute">${I('info',14)} DI gali klysti: palygink nuotraukas ir rūšį patvirtink pats.</p>
 </section>
 <div class="row"><button class="btn" data-a="go" data-v="f1why">${I('info')} Kodėl?</button><button class="btn" data-a="f1again">${I('redo')} Nauja nuotrauka</button></div>
 <span class="lbl">Kandidatai · paliesk, kad palygintum</span>
@@ -651,7 +657,7 @@ T.f2cap='Ligų patikra';
 V.f2cap=()=>{const f=S.f2,p=plantById(f.plantId);const sel=id=>f.photos.some(x=>x.sample===id);const hasWhole=f.photos.some(x=>x.part==='Visas augalas');const q=f.q,qe=f.qErr;
 return `
 <div class="prow" style="cursor:default">${ph(p.img,'','',p.url)}<span><b>${SP[p.sp].lt}</b><br><span class="xs mute">Rūšis patvirtinta F1</span></span><span></span></div>
-<div><h3>1. Nufotografuok pažeistą lapą</h3><p class="small mute">Būtina pažeistos vietos nuotrauka iš arti. Viso augalo nuotrauka nebūtina, bet padidina tikrumą.</p></div>
+<div><h3>1. Nufotografuok pažeistą lapą</h3><p class="small mute">Būtina pažeistos vietos nuotrauka iš arti. Viso augalo nuotrauka nebūtina, bet padidina tikrumą.<span class="desk-only"> Kompiuteryje nuotrauką gali nutempti į šį langą.</span></p></div>
 <div class="demo">
   <span class="chip demo" style="justify-self:start">Prototipas · kamera</span>
   <div class="grid2">${F2S.map(s=>`<button class="sample" data-a="f2pick" data-v="${s.id}" aria-pressed="${sel(s.id)}">${ph(s.img,'','',null,true)}<b>${s.t}</b><span class="h">${s.k}</span></button>`).join('')}</div>
@@ -705,6 +711,7 @@ return `
   <label class="sw small"><input type="checkbox" data-a="f2spots" ${f.showSpots?'checked':''}> Rodyti pažymėtas vietas</label>
   <p class="small"><b>Požymiai:</b> ${D.feat}</p>
   ${f.photos.length===1?`<p class="xs mute">Analizuota tik viena nuotrauka. Su viso augalo nuotrauka tikrumas būtų didesnis.</p>`:''}
+  <p class="xs mute">${I('info',14)} DI gali klysti: tai pasiūlymas, ne specialisto diagnozė. Ar gydyti, sprendi tu.</p>
 </section>
 <div class="row"><button class="btn" data-a="go" data-v="f2why">${I('info')} Kodėl?</button><button class="btn" data-a="go" data-v="f2rej">${I('x')} Ne ta liga</button></div>
 <span class="lbl">Kiti kandidatai</span>
@@ -813,8 +820,12 @@ ${act?`<div class="act" role="region" aria-label="Veiksmai">${act}</div>`:''}
   renderToast();fitPad();fixHeadings();
 }
 function fixHeadings(){let prev=1;document.querySelectorAll('main h2,main h3,main h4').forEach(h=>{h.removeAttribute('aria-level');let l=+h.tagName[1];if(l>prev+1){l=prev+1;h.setAttribute('aria-level',l)}prev=l})}
-function fitPad(){if(matchMedia('(min-width:900px)').matches){const m=document.querySelector('main');if(m)m.style.paddingBottom='';return}const m=document.querySelector('main'),a=document.querySelector('.act'),n=document.querySelector('nav.tabs');if(!m)return;m.style.paddingBottom='';const need=(a?a.offsetHeight:0)+(n?n.offsetHeight:0)+24;if(need>parseFloat(getComputedStyle(m).paddingBottom))m.style.paddingBottom=need+'px'}
+function fitPad(){scrollPad();if(matchMedia('(min-width:900px)').matches){const m=document.querySelector('main');if(m)m.style.paddingBottom='';return}const m=document.querySelector('main'),a=document.querySelector('.act'),n=document.querySelector('nav.tabs');if(!m)return;m.style.paddingBottom='';const need=(a?a.offsetHeight:0)+(n?n.offsetHeight:0)+24;if(need>parseFloat(getComputedStyle(m).paddingBottom))m.style.paddingBottom=need+'px'}
+function scrollPad(){const h=document.querySelector('header.bar'),a=document.querySelector('.act'),n=document.querySelector('nav.tabs'),de=document.documentElement;const nb=n&&n.getBoundingClientRect().top>innerHeight/2?n.offsetHeight:0;de.style.scrollPaddingTop=((h?h.offsetHeight:0)+8)+'px';de.style.scrollPaddingBottom=((a?a.offsetHeight:0)+nb+16)+'px'}
 addEventListener('resize',fitPad);
+addEventListener('dragover',e=>{if(['f1cap','f2cap'].includes(S.screen)){e.preventDefault();document.body.classList.add('dragging')}});
+addEventListener('dragleave',e=>{if(!e.relatedTarget)document.body.classList.remove('dragging')});
+addEventListener('drop',e=>{document.body.classList.remove('dragging');if(!['f1cap','f2cap'].includes(S.screen))return;e.preventDefault();const inp=document.querySelector(S.screen==='f1cap'?'[data-a=f1file]':'[data-a=f2file]');if(!inp||!e.dataTransfer.files.length)return;inp.files=e.dataTransfer.files;inp.dispatchEvent(new Event('change',{bubbles:true}))});
 
 /* ================= ANALIZĖ (laikmačiai) ================= */
 function startAnalysis(fn){
