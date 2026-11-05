@@ -357,7 +357,7 @@ const note=(kind,icon,title,body='',extra='')=>`<div class="note ${kind}" ${kind
 const T={}; // pavadinimas
 const V={}; // turinys
 const ACT={}; // apatiniai veiksmai (lipnūs)
-const TAB={home:0,about:0,guide:0,intro:-1,f1cap:1,f1bad:1,an:-1,f1off:-1,f1cancel:-1,f1res:1,f1why:1,f1cat:1,f1low:1,f1saved:1,plants:3,plant:3,chg:3,chgok:3,f2pick:2,f2cap:2,f2res:2,f2why:2,f2rej:2,f2closed:2,f2plan:2,f2done:2,f2spec:2,f2sent:2,f2re:3,f2reRes:3,f2end:3,f2bad:3};
+const TAB={home:0,about:0,guide:0,settings:0,intro:-1,f1cap:1,f1bad:1,an:-1,f1off:-1,f1cancel:-1,f1res:1,f1why:1,f1cat:1,f1low:1,f1saved:1,plants:3,plant:3,chg:3,chgok:3,f2pick:2,f2cap:2,f2res:2,f2why:2,f2rej:2,f2closed:2,f2plan:2,f2done:2,f2spec:2,f2sent:2,f2re:3,f2reRes:3,f2end:3,f2bad:3};
 
 /* ---------- Pradžia (informacinis) ---------- */
 T.home='Augalai';
@@ -385,7 +385,8 @@ ${S.plants.length?S.plants.slice(0,3).map(plantRow).join(''):`<div class="card s
   <button class="card" style="text-align:left;border:0" data-a="go" data-v="about">${I('info',22)}<b>Kaip veikia DI?</b><span class="xs mute">Ką DI moka ir ko ne, modeliai, tikrumas, klaidos</span></button>
   <button class="card" style="text-align:left;border:0" data-a="go" data-v="guide">${I('user',22)}<b>Vertintojams</b><span class="xs mute">Personos ir kaip pasiekti kiekvieną šaką</span></button>
 </div>
-<p class="xs mute" style="text-align:center">Be reklamų · be dienos limito · be paskyros · vieta išjungta</p>`;
+<button class="btn soft" data-a="go" data-v="settings">${I('shield')} Privatumas ir nustatymai</button>
+<p class="xs mute" style="text-align:center">Be reklamų · be dienos limito · be paskyros · ${S.loc?'regionas įjungtas':'vieta išjungta'}</p>`;
 const plantRow=p=>`<button class="prow" data-a="openPlant" data-v="${p.id}">${ph(p.img,'','',p.url)}<span><b>${SP[p.sp].lt}</b><br><span class="la small">${SP[p.sp].la}</span>${p.treat?`<br><span class="xs mute">Gydoma: ${DIS[p.treat.d].lt}</span>`:''}</span>${I('chev',18)}</button>`;
 
 /* ---------- Vertintojų gidas ---------- */
@@ -480,6 +481,9 @@ V.intro=()=>`
 </div>
 <p class="xs mute">Viskas išjungta, kol pats neįjungsi.</p>`;
 ACT.intro=()=>`<button class="btn pri big" data-a="introOk">Supratau, tęsti</button>`;
+T.settings='Privatumas ir nustatymai';
+V.settings=()=>V.intro().replace('Kas bus siunčiama?','Kas siunčiama').replace('Viskas išjungta, kol pats neįjungsi.','Pakeitimai galioja iškart. Išjungus sutikimą mokymui, ankstesnės nuotraukos iš mokymo rinkinio pašalinamos.');
+ACT.settings=()=>`<button class="btn pri big" data-a="settingsOk">Išsaugoti</button>`;
 
 /* ---------- F1: nuotraukos ---------- */
 T.f1cap='Atpažinti augalą';
@@ -595,7 +599,7 @@ return `
 <label class="f">Augalo pavadinimas <span class="h">Lietuviškai arba lotyniškai, bent 2 raidės</span>
 <input type="search" data-a="f1q" maxlength="40" value="${esc(f.q)}" placeholder="pvz., monstera" autocomplete="off" ${q.length>=2&&!list.length?'aria-invalid="true"':''}></label>
 ${q.length===1?`<p class="xs mute">Įvesk dar bent vieną raidę.</p>`:''}
-${q.length>=2&&!list.length?note('warn','search',`Nieko nerasta pagal „${esc(f.q)}“`,'Patikrink rašybą arba pabandyk lotynišką pavadinimą.'):''}
+${q.length>=2&&!list.length?note('warn','search',`Nieko nerasta pagal „${esc(f.q)}“`,'Patikrink rašybą arba pabandyk lotynišką pavadinimą. Jei augalo kataloge nėra, nufotografuok jį dar kartą: žiedą ar visą augalą.',`<button class="btn" data-a="f1again">${I('redo')} Nauja nuotrauka</button>`):''}
 <div class="stack" role="radiogroup" aria-label="Katalogo rezultatai">${list.map(k=>`<label class="crow ${f.catSel===k?'sel':''}"><input type="radio" name="cat" data-a="f1catSel" data-v="${k}" ${f.catSel===k?'checked':''}>${ph(SP[k].img)}<span><span class="n">${SP[k].lt}</span><br><span class="la small">${SP[k].la}</span></span><span></span></label>`).join('')}</div>
 ${f.catErr?`<p class="err-t" role="alert">${I('warn',18)} ${f.catErr}</p>`:''}`};
 ACT.f1cat=()=>`<button class="btn pri" data-a="f1catSave">Išsaugoti pasirinktą</button>`;
@@ -791,7 +795,8 @@ V.f2re=()=>{const f=S.f2,p=plantById(f.plantId);return `
 ${note('info','bell','Praėjo 7 dienos',`Laikas patikrinti, ar ${SP[p.sp].lt.toLowerCase()} gerėja. Nufotografuok tą patį lapą.`)}
 <div class="demo"><span class="chip demo" style="justify-self:start">Prototipas · kamera</span><div class="grid2">
 <button class="sample" data-a="f2rePick" data-v="better" aria-pressed="${f.re==='better'}">${ph('roseBetter')}<b>Dėmių mažiau</b><span class="h">šaka „gerėja“</span></button>
-<button class="sample" data-a="f2rePick" data-v="worse" aria-pressed="${f.re==='worse'}">${ph('roseWorse')}<b>Dėmių daugiau</b><span class="h">šaka „negerėja“</span></button></div></div>`};
+<button class="sample" data-a="f2rePick" data-v="worse" aria-pressed="${f.re==='worse'}">${ph('roseWorse')}<b>Dėmių daugiau</b><span class="h">šaka „negerėja“</span></button></div></div>
+${f.re?'':'<p class="xs mute">Pasirink naują nuotrauką, tada spausk „Palyginti“.</p>'}`};
 ACT.f2re=()=>`<button class="btn pri big" data-a="go" data-v="f2reRes" ${S.f2.re?'':'disabled'}>Palyginti</button>`;
 T.f2reRes='Palyginimas';
 V.f2reRes=()=>{const b=S.f2.re==='better';return `
@@ -907,6 +912,7 @@ const A={
   startF1:()=>{S.f1=NEWF1();S.returnF2=false;if(needIntro('f1cap'))return;go('f1cap')},
   startF2:()=>{if(needIntro('f2pick'))return;go('f2pick')},
   tabPlants:()=>go('plants'),
+  settingsOk:()=>{S.intro=true;back();say('Nustatymai išsaugoti')},
   introOk:()=>{S.intro=true;const n=S.afterIntro||'home';S.stack.pop();go(n,{push:false});S.stack.push('home')},
   f1pick:(el)=>{const f=S.f1,id=el.dataset.v,i=f.photos.findIndex(p=>p.sample===id);
     if(i>=0)f.photos.splice(i,1);else{if(f.photos.length>=3){f.err='Galima ne daugiau kaip 3 nuotraukos. Pašalink kurią nors.';render();return}
