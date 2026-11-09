@@ -544,7 +544,7 @@ V.f1res=()=>{const f=S.f1,o=f.out,low=f1isLow(o),c=o.c;const top=c[0][1],gap=c[0
 const [k,p]=c[f.sel],sp=SP[k],b=BAND(p);
 let head='';
 if(o.genus)head=note('warn','info',`Nustatyta tik gentis: ${SP[o.genus].lt} (${o.gp} %)`,`Šios rūšies duomenų turime nedaug, nes nufotografuota tik dalis augalo. ${o.ask}`,`<button class="btn" data-a="f1add">${I('plus')} Pridėti nuotrauką</button>`);
-else if(low)head=note('warn','info','Nesu tikras',[top<50?`Geriausias kandidatas tik ${top} % (riba 50 %).`:'',gap<15?`Du pirmi skiriasi tik ${gap} p. p. (riba 15).`:'',o.poor?'Analizuota prasta nuotrauka.':''].join(' ')+' '+(o.ask||'Nufotografuok žiedą, stiebą ar visą augalą ryškiau.'),`<button class="btn" data-a="f1add">${I('plus')} Pridėti nuotrauką</button>`);
+else if(low)head=note('warn','info','Nesu tikras',[top<50?`Geriausias kandidatas tik ${top} % (riba 50 %).`:'',gap<15?`Du pirmi kandidatai skiriasi tik ${gap} procentiniais punktais (riba 15).`:'',o.poor?'Analizuota prasta nuotrauka.':''].join(' ')+' '+(o.ask||'Nufotografuok žiedą, stiebą ar visą augalą ryškiau.'),`<button class="btn" data-a="f1add">${I('plus')} Pridėti nuotrauką</button>`);
 return `
 <div class="row">${ph(f.photos[0].img,'','',f.photos[0].url).replace('class="ph"','class="ph" style="width:56px;flex:none"')}<span class="small mute">Analizuota: ${f.photos.length} nuotr. (${f.photos.map(p=>p.part.toLowerCase()).join(', ')})</span></div>
 ${head}
